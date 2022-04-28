@@ -26,7 +26,7 @@ class CreateConversationObjects extends Migration
             $table->unsignedBigInteger('parent_id')->nullable()->index();
             $table->json('data')->nullable();
             $table->timestamps();
-            $table->uuid('uid');
+            $table->uuid('uuid');
             $table->foreign('parent_id')->references('id')->on('conversation_objects')->onDelete('cascade');
         });
     }
