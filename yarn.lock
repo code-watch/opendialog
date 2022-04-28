@@ -1613,10 +1613,10 @@
   dependencies:
     "@octokit/openapi-types" "^11.2.0"
 
-"@opendialogai/opendialog-design-system-pkg@1.14.0-0":
-  version "1.14.0-0"
-  resolved "https://registry.yarnpkg.com/@opendialogai/opendialog-design-system-pkg/-/opendialog-design-system-pkg-1.14.0-0.tgz#45a9f5275e9dbeb054952a5902ab2f32299578c4"
-  integrity sha512-TPzmtiaKD8Nl2M1PqP0VWWpPDEbzLX8ztbBHU6fD9MpIPu1YTN400J3jxIcou9cUXPFaeu8przKudrueV7AsDg==
+"@opendialogai/opendialog-design-system-pkg@1.14.0":
+  version "1.14.0"
+  resolved "https://registry.yarnpkg.com/@opendialogai/opendialog-design-system-pkg/-/opendialog-design-system-pkg-1.14.0.tgz#f948a1d30993412ae11273d57d62d0dcbe395a86"
+  integrity sha512-+FvRg4TpAY1gHbxBPaR7Z1QYWmdRfhrzCcIKtuujgNkeCig0n5PTmlS54ZMDGg7RieK2MMAcAa5GgDBxswzSJA==
   dependencies:
     "@aws-sdk/client-cognito-identity" "^3.50.0"
     "@aws-sdk/client-transcribe-streaming" "^3.50.0"
