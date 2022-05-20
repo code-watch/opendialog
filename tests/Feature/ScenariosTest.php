@@ -3,10 +3,8 @@
 
 namespace Tests\Feature;
 
-use App\Console\Facades\ImportExportSerializer;
 use App\Http\Facades\Serializer;
 use App\Http\Resources\ScenarioResource;
-use App\ImportExportHelpers\ScenarioImportExportHelper;
 use App\Template;
 use App\User;
 use Carbon\Carbon;
@@ -29,6 +27,8 @@ use OpenDialogAi\Core\Conversation\Scene;
 use OpenDialogAi\Core\Conversation\SceneCollection;
 use OpenDialogAi\Core\Conversation\Turn;
 use OpenDialogAi\Core\Conversation\TurnCollection;
+use OpenDialogAi\Core\ImportExportHelpers\Facades\ImportExportSerializer;
+use OpenDialogAi\Core\ImportExportHelpers\ScenarioImportExportHelper;
 use OpenDialogAi\Core\InterpreterEngine\OpenDialog\OpenDialogInterpreterConfiguration;
 use OpenDialogAi\InterpreterEngine\Interpreters\OpenDialogInterpreter;
 use OpenDialogAi\MessageBuilder\MessageMarkUpGenerator;

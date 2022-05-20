@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Console\Facades\ImportExportSerializer;
 use App\Http\Controllers\Controller;
 use App\Http\Facades\Serializer;
 use App\Http\Requests\ConversationObjectDuplicationRequest;
@@ -11,8 +10,6 @@ use App\Http\Requests\DeleteConversationRequest;
 use App\Http\Requests\SceneRequest;
 use App\Http\Resources\ConversationResource;
 use App\Http\Resources\SceneResource;
-use App\ImportExportHelpers\PathSubstitutionHelper;
-use App\ImportExportHelpers\ScenarioImportExportHelper;
 use App\Rules\ConversationInTransition;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
@@ -23,6 +20,9 @@ use OpenDialogAi\Core\Conversation\Facades\ConversationDataClient;
 use OpenDialogAi\Core\Conversation\Intent;
 use OpenDialogAi\Core\Conversation\Scene;
 use OpenDialogAi\Core\Conversation\Transition;
+use OpenDialogAi\Core\ImportExportHelpers\Facades\ImportExportSerializer;
+use OpenDialogAi\Core\ImportExportHelpers\PathSubstitutionHelper;
+use OpenDialogAi\Core\ImportExportHelpers\ScenarioImportExportHelper;
 
 class ConversationsController extends Controller
 {
