@@ -20,6 +20,8 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
+use OpenDialogAi\ConversationEngine\Reasoners\IntentInterpreterFilter;
+use OpenDialogAi\Core\Components\Configuration\ComponentConfigurationKey;
 use OpenDialogAi\Core\Conversation\DataClients\Serializers\Normalizers\ImportExport\ScenarioNormalizer;
 use OpenDialogAi\Core\Conversation\Facades\ConversationDataClient;
 use OpenDialogAi\Core\Conversation\Facades\MessageTemplateDataClient;
@@ -28,6 +30,7 @@ use OpenDialogAi\Core\Conversation\Intent;
 use OpenDialogAi\Core\Conversation\MessageTemplate;
 use OpenDialogAi\Core\Conversation\Transition;
 use OpenDialogAi\Core\Conversation\Turn;
+use OpenDialogAi\Core\InterpreterEngine\Service\ConfiguredInterpreterServiceInterface;
 use OpenDialogAi\MessageBuilder\MessageMarkUpGenerator;
 
 class TurnsController extends Controller
@@ -201,8 +204,13 @@ class TurnsController extends Controller
             $messageTemplate->setName('auto generated');
             $messageTemplate->setOdId('auto_generated');
             $messageTemplate->setIntent($intent);
+
+            $interpreter = IntentInterpreterFilter::getInterpreter($intent);
+            $scenarioUid = $intent->getScenario()->getUid();
             $messageTemplate->setMessageMarkup(
-                (new MessageMarkUpGenerator())->addTextMessage($intent->getSampleUtterance())->getMarkUp()
+                resolve(ConfiguredInterpreterServiceInterface::class)->get(
+                    new ComponentConfigurationKey($scenarioUid, $interpreter)
+                )->getMessageMarkup($intent->getSampleUtterance())
             );
 
             MessageTemplateDataClient::addMessageTemplateToIntent($messageTemplate);
