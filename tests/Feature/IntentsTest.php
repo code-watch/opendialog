@@ -20,6 +20,7 @@ use OpenDialogAi\Core\Conversation\Scene;
 use OpenDialogAi\Core\Conversation\Transition;
 use OpenDialogAi\Core\Conversation\Turn;
 use OpenDialogAi\Core\Conversation\VirtualIntent;
+use OpenDialogAi\Core\InterpreterEngine\OpenDialog\OpenDialogInterpreterConfiguration;
 use OpenDialogAi\Core\InterpreterEngine\Service\ConfiguredInterpreterService;
 use OpenDialogAi\InterpreterEngine\Interpreters\OpenDialogInterpreter;
 use Tests\TestCase;
@@ -252,6 +253,11 @@ class IntentsTest extends TestCase
             ->with($fakeTurn->getUid(), false)
             ->andReturn($fakeTurn);
 
+        ConversationDataClient::shouldReceive('getScenarioWithFocusedTurn')
+            ->once()
+            ->with($fakeTurn->getUid())
+            ->andReturn($fakeTurn);
+
         ConversationDataClient::shouldReceive();
         ConversationDataClient::shouldReceive('addResponseIntent')
             ->once()
@@ -266,7 +272,10 @@ class IntentsTest extends TestCase
                 return $message->getOrder() === 0; //  Check that the order is set to 0 on the persisted message
             }));
 
-        $interpreter = new OpenDialogInterpreter(OpenDialogInterpreter::createConfiguration('test', []));
+        /** @var OpenDialogInterpreterConfiguration $configuration */
+        $configuration = OpenDialogInterpreter::createConfiguration('test', []);
+        $interpreter = new OpenDialogInterpreter($configuration);
+
         $this->mock(
             ConfiguredInterpreterService::class,
             function(MockInterface $mock) use ($interpreter) {

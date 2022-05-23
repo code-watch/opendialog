@@ -19,6 +19,8 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
 use OpenDialogAi\ConversationEngine\Reasoners\IntentInterpreterFilter;
 use OpenDialogAi\Core\Components\Configuration\ComponentConfigurationKey;
+use OpenDialogAi\Core\Components\Configuration\ConfigurationDataHelper;
+use OpenDialogAi\Core\Components\Exceptions\ConfigurationNotRegistered;
 use OpenDialogAi\Core\Conversation\DataClients\Serializers\Normalizers\ImportExport\ScenarioNormalizer;
 use OpenDialogAi\Core\Conversation\Facades\ConversationDataClient;
 use OpenDialogAi\Core\Conversation\Facades\MessageTemplateDataClient;
@@ -27,10 +29,11 @@ use OpenDialogAi\Core\Conversation\Intent;
 use OpenDialogAi\Core\Conversation\MessageTemplate;
 use OpenDialogAi\Core\Conversation\Transition;
 use OpenDialogAi\Core\Conversation\Turn;
-use OpenDialogAi\Core\InterpreterEngine\Service\ConfiguredInterpreterServiceInterface;
 use OpenDialogAi\Core\ImportExportHelpers\Facades\ImportExportSerializer;
 use OpenDialogAi\Core\ImportExportHelpers\PathSubstitutionHelper;
 use OpenDialogAi\Core\ImportExportHelpers\ScenarioImportExportHelper;
+use OpenDialogAi\Core\InterpreterEngine\Service\ConfiguredInterpreterServiceInterface;
+use OpenDialogAi\InterpreterEngine\Interpreters\OpenDialogInterpreter;
 
 class TurnsController extends Controller
 {
@@ -202,18 +205,36 @@ class TurnsController extends Controller
                 sprintf('Creating a new intent and message template for intent %s as the speaker was APP', $intent->getName())
             );
 
+            $sampleUtterance = $intent->getSampleUtterance();
+
+            // Ensure the intent has a full interpreter hierarchy
+            $turn = ConversationDataClient::getScenarioWithFocusedTurn($intent->getTurn()->getUid());
+            $intent->setTurn($turn);
+
+            $interpreterName = IntentInterpreterFilter::getInterpreter($intent);
+
+            if (is_null($interpreterName) || $interpreterName === '') {
+                $interpreterName = ConfigurationDataHelper::OPENDIALOG_INTERPRETER;
+            }
+
+            $scenarioUid = $intent->getScenario()->getUid();
+            $key = new ComponentConfigurationKey($scenarioUid, $interpreterName);
+
+            /** @var ConfiguredInterpreterServiceInterface $service */
+            $service = resolve(ConfiguredInterpreterServiceInterface::class);
+
+            try {
+                $interpreter = $service->get($key);
+                $messageMarkup = $interpreter->getDefaultMessageMarkup($sampleUtterance);
+            } catch (ConfigurationNotRegistered $e) {
+                $messageMarkup = OpenDialogInterpreter::getDefaultMessageMarkup($sampleUtterance);
+            }
+
             $messageTemplate = new MessageTemplate();
             $messageTemplate->setName('auto generated');
             $messageTemplate->setOdId('auto_generated');
             $messageTemplate->setIntent($intent);
-
-            $interpreter = IntentInterpreterFilter::getInterpreter($intent);
-            $scenarioUid = $intent->getScenario()->getUid();
-            $messageTemplate->setMessageMarkup(
-                resolve(ConfiguredInterpreterServiceInterface::class)->get(
-                    new ComponentConfigurationKey($scenarioUid, $interpreter)
-                )->getMessageMarkup($intent->getSampleUtterance())
-            );
+            $messageTemplate->setMessageMarkup($messageMarkup);
             $messageTemplate->setOrder(0);
 
             MessageTemplateDataClient::addMessageTemplateToIntent($messageTemplate);

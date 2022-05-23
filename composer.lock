@@ -3329,12 +3329,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/opendialogai/core.git",
-                "reference": "c8deba645d82c4c91460f5820479ddb95bd9c3d0"
+                "reference": "6c187448c0fc565bd662e619094dfbb4309354e0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/opendialogai/core/zipball/c8deba645d82c4c91460f5820479ddb95bd9c3d0",
-                "reference": "c8deba645d82c4c91460f5820479ddb95bd9c3d0",
+                "url": "https://api.github.com/repos/opendialogai/core/zipball/6c187448c0fc565bd662e619094dfbb4309354e0",
+                "reference": "6c187448c0fc565bd662e619094dfbb4309354e0",
                 "shasum": ""
             },
             "require": {
@@ -3421,7 +3421,7 @@
                 "issues": "https://github.com/opendialogai/core/issues",
                 "source": "https://github.com/opendialogai/core/tree/OPNDLG-1412--voice-sample-message"
             },
-            "time": "2022-05-18T13:34:26+00:00"
+            "time": "2022-05-23T12:24:47+00:00"
         },
         {
             "name": "opendialogai/dgraph-docker",
@@ -12072,5 +12072,5 @@
         "ext-simplexml": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.1.0"
+    "plugin-api-version": "2.2.0"
 }
