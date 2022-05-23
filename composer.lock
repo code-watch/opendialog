@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4e36892d49f51514f33211dcc6476f1e",
+    "content-hash": "769e1782397926f25b46d5735fdd3b78",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -3365,7 +3365,6 @@
                 "phpunit/phpunit": "^9.0",
                 "squizlabs/php_codesniffer": "^3.4"
             },
-            "default-branch": true,
             "type": "library",
             "extra": {
                 "laravel": {
