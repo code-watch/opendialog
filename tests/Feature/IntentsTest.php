@@ -5,6 +5,7 @@ namespace Tests\Feature;
 
 use App\User;
 use Carbon\Carbon;
+use Mockery\MockInterface;
 use OpenDialogAi\Core\Conversation\BehaviorsCollection;
 use OpenDialogAi\Core\Conversation\ConditionCollection;
 use OpenDialogAi\Core\Conversation\Conversation;
@@ -22,6 +23,9 @@ use OpenDialogAi\Core\Conversation\Transition;
 use OpenDialogAi\Core\Conversation\Turn;
 use OpenDialogAi\Core\Conversation\TurnCollection;
 use OpenDialogAi\Core\Conversation\VirtualIntent;
+use OpenDialogAi\Core\InterpreterEngine\OpenDialog\OpenDialogInterpreterConfiguration;
+use OpenDialogAi\Core\InterpreterEngine\Service\ConfiguredInterpreterService;
+use OpenDialogAi\InterpreterEngine\Interpreters\OpenDialogInterpreter;
 use Tests\TestCase;
 
 class IntentsTest extends TestCase
@@ -297,7 +301,16 @@ class IntentsTest extends TestCase
 
     public function testAddResponseIntentToTurn()
     {
-        $fakeTurn = new Turn($this->createScene());
+        $fakeScenario = new Scenario();
+        $fakeScenario->setUid('0x0001');
+
+        $fakeConversation = new Conversation($fakeScenario);
+        $fakeConversation->setUid('0x0002');
+
+        $fakeScene = new Scene($fakeConversation);
+        $fakeScene->setUid('0x003');
+
+        $fakeTurn = new Turn($fakeScene);
         $fakeTurn->setUid('0x0004');
         $fakeTurn->setName('New Example turn 1');
         $fakeTurn->setOdId('new_example_turn_1');
@@ -332,7 +345,7 @@ class IntentsTest extends TestCase
             ->andReturn($fakeTurn);
 
         ConversationDataClient::shouldReceive('getScenarioWithFocusedTurn')
-            ->once()
+            ->twice()
             ->with($fakeTurn->getUid())
             ->andReturn($fakeTurn);
 
@@ -348,6 +361,20 @@ class IntentsTest extends TestCase
             ->with(\Mockery::on(function ($message) {
                 return $message->getOrder() === 0; //  Check that the order is set to 0 on the persisted message
             }));
+
+        /** @var OpenDialogInterpreterConfiguration $configuration */
+        $configuration = OpenDialogInterpreter::createConfiguration('test', []);
+        $interpreter = new OpenDialogInterpreter($configuration);
+
+        $this->mock(
+            ConfiguredInterpreterService::class,
+            function(MockInterface $mock) use ($interpreter) {
+                $mock->shouldReceive('has')
+                    ->andReturn(true);
+
+                $mock->shouldReceive('get')
+                    ->andReturn($interpreter);
+            });
 
         $this->actingAs($this->user, 'api')
             ->json('POST', '/admin/api/conversation-builder/turns/' . $fakeTurn->getUid() . '/intents', [
