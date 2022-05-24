@@ -8,15 +8,19 @@ use Carbon\Carbon;
 use OpenDialogAi\Core\Conversation\BehaviorsCollection;
 use OpenDialogAi\Core\Conversation\ConditionCollection;
 use OpenDialogAi\Core\Conversation\Conversation;
+use OpenDialogAi\Core\Conversation\ConversationCollection;
 use OpenDialogAi\Core\Conversation\Exceptions\ConversationObjectNotFoundException;
 use OpenDialogAi\Core\Conversation\Facades\ConversationDataClient;
 use OpenDialogAi\Core\Conversation\Facades\IntentDataClient;
 use OpenDialogAi\Core\Conversation\Facades\MessageTemplateDataClient;
 use OpenDialogAi\Core\Conversation\Intent;
 use OpenDialogAi\Core\Conversation\IntentCollection;
+use OpenDialogAi\Core\Conversation\Scenario;
 use OpenDialogAi\Core\Conversation\Scene;
+use OpenDialogAi\Core\Conversation\SceneCollection;
 use OpenDialogAi\Core\Conversation\Transition;
 use OpenDialogAi\Core\Conversation\Turn;
+use OpenDialogAi\Core\Conversation\TurnCollection;
 use OpenDialogAi\Core\Conversation\VirtualIntent;
 use Tests\TestCase;
 
@@ -141,7 +145,7 @@ class IntentsTest extends TestCase
 
     public function testAddRequestIntentToTurn()
     {
-        $fakeTurn = new Turn();
+        $fakeTurn = new Turn($this->createScene());
         $fakeTurn->setUid('0x0004');
         $fakeTurn->setName('New Example turn 1');
         $fakeTurn->setOdId('new_example_turn_1');
@@ -155,6 +159,11 @@ class IntentsTest extends TestCase
         ConversationDataClient::shouldReceive('getTurnByUid')
             ->once()
             ->with($fakeTurn->getUid(), false)
+            ->andReturn($fakeTurn);
+
+        ConversationDataClient::shouldReceive('getScenarioWithFocusedTurn')
+            ->once()
+            ->with($fakeTurn->getUid())
             ->andReturn($fakeTurn);
 
         ConversationDataClient::shouldReceive();
@@ -182,7 +191,90 @@ class IntentsTest extends TestCase
                 ]
 
             ])
-            //->assertStatus(200)
+            ->assertJson([
+                "order" => "REQUEST",
+                "intent" => [
+                    "id" => "0x0005",
+                    "od_id" => "welcome_intent_1",
+                    "name" => "Welcome intent 1",
+                    "description" => "A welcome intent 1",
+                    "interpreter" => "interpreter.core.nlp",
+                    "created_at" => "2021-02-24T09:30:00+0000",
+                    "updated_at" => "2021-02-24T09:30:00+0000",
+                    "conditions" => [],
+                    "behaviors" => [],
+                    "listens_for" => ["intent_a", "intent_b"],
+                    "speaker" => "USER",
+                    "confidence" => 1,
+                    "sample_utterance" => "Hello!",
+                ]
+            ]);
+    }
+
+    public function testAddRequestIntentToTurnInNewScenario()
+    {
+        $originalScenarioId = '0x990';
+        $originalScenario = new Scenario();
+        $originalScenario->setUid($originalScenarioId);
+
+        $originalConversation = new Conversation($originalScenario);
+        $originalScenario->setConversations(new ConversationCollection([$originalConversation]));
+
+        $originalScene = new Scene($originalConversation);
+        $originalConversation->setScenes(new SceneCollection([$originalScene]));
+
+        $originalTurn = new Turn($originalScene);
+        $originalTurn->setUid('0x0004');
+        $originalTurn->setName('New Example turn 1');
+        $originalTurn->setOdId('new_example_turn_1');
+        $originalTurn->setDescription("An new example turn 1");
+        $originalTurn->setRequestIntents(new IntentCollection([
+            $this->createIntent($originalTurn, '0x006', 'pre-existing', Intent::USER)
+        ]));
+        $originalScene->setTurns(new TurnCollection([$originalTurn]));
+
+        $newTurn = $originalTurn->copy();
+        $newScenarioId = '0x991';
+        $newTurn->getScenario()->setUid($newScenarioId);
+
+        $originalRequestIntent = $this->createIntent($newTurn, '0x0005', 'welcome_intent_1', Intent::USER);
+
+        ConversationDataClient::shouldReceive('getTurnByUid')
+            ->once()
+            ->with($originalTurn->getUid(), false)
+            ->andReturn($originalTurn);
+
+        ConversationDataClient::shouldReceive('getScenarioWithFocusedTurn')
+            ->once()
+            ->with($originalTurn->getUid())
+            ->andReturn($originalTurn);
+
+        ConversationDataClient::shouldReceive();
+        ConversationDataClient::shouldReceive('addRequestIntent')
+            ->once()
+            ->with(\Mockery::on(function ($argument) {
+                return $argument->getOrder() === 1; //  Check that the order is set to 1 on the intent being persisted
+            }))
+            ->andReturn($originalRequestIntent);
+
+        $this->actingAs($this->user, 'api')
+            ->json('POST', '/admin/api/conversation-builder/turns/' . $originalTurn->getUid() . '/intents', [
+                "order" => "REQUEST",
+                "intent" => [
+                    "od_id" => "welcome_intent_1",
+                    "name" => "Welcome intent 1",
+                    "description" => "A welcome intent 1",
+                    "default_interpreter" => "interpreter.core.nlp",
+                    "conditions" => [],
+                    "behaviors" => [],
+                    "listens_for" => ["intent_a", "intent_b"],
+                    "speaker" => "USER",
+                    "confidence" => 1,
+                    "sample_utterance" => "Hello!"
+                ]
+
+            ])
+            ->assertHeader('OD-New-Scenario', $newScenarioId)
             ->assertJson([
                 "order" => "REQUEST",
                 "intent" => [
@@ -205,7 +297,7 @@ class IntentsTest extends TestCase
 
     public function testAddResponseIntentToTurn()
     {
-        $fakeTurn = new Turn();
+        $fakeTurn = new Turn($this->createScene());
         $fakeTurn->setUid('0x0004');
         $fakeTurn->setName('New Example turn 1');
         $fakeTurn->setOdId('new_example_turn_1');
@@ -239,7 +331,11 @@ class IntentsTest extends TestCase
             ->with($fakeTurn->getUid(), false)
             ->andReturn($fakeTurn);
 
-        ConversationDataClient::shouldReceive();
+        ConversationDataClient::shouldReceive('getScenarioWithFocusedTurn')
+            ->once()
+            ->with($fakeTurn->getUid())
+            ->andReturn($fakeTurn);
+
         ConversationDataClient::shouldReceive('addResponseIntent')
             ->once()
             ->with(\Mockery::on(function ($argument) {
@@ -270,7 +366,6 @@ class IntentsTest extends TestCase
                 ]
 
             ])
-            //->assertStatus(200)
             ->assertJson([
                 "order" => "RESPONSE",
                 "intent" => [
@@ -836,5 +931,13 @@ class IntentsTest extends TestCase
                 'id' => '0x9999',
             ]);
 
+    }
+
+    private function createScene(): Scene
+    {
+        $scenario = new Scenario();
+        $scenario->setUid('0x001');
+        $conversation = new Conversation($scenario);
+        return new Scene($conversation);
     }
 }

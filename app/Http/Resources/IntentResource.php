@@ -11,6 +11,7 @@ use OpenDialogAi\Core\Conversation\Condition;
 use OpenDialogAi\Core\Conversation\Intent;
 use OpenDialogAi\Core\Conversation\MessageTemplate;
 use OpenDialogAi\Core\Conversation\Transition;
+use OpenDialogAi\Core\Conversation\Turn;
 use OpenDialogAi\Core\Conversation\VirtualIntent;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 
@@ -43,6 +44,9 @@ class IntentResource extends JsonResource
             Intent::MESSAGE_TEMPLATES => [
                 MessageTemplate::UID,
             ],
+            Intent::TURN => [
+                Turn::UID,
+            ]
         ]
     ];
 

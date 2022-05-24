@@ -32,6 +32,8 @@ use OpenDialogAi\MessageBuilder\MessageMarkUpGenerator;
 
 class TurnsController extends Controller
 {
+    use ConversationObjectTrait;
+
     /**
      * Create a new controller instance.
      *
@@ -69,9 +71,9 @@ class TurnsController extends Controller
      * @param  Turn               $turn
      * @param  TurnIntentRequest  $request
      *
-     * @return TurnIntentResource
+     * @return TurnIntentResource|JsonResponse
      */
-    public function storeTurnIntentAgainstTurn(Turn $turn, TurnIntentRequest $request): TurnIntentResource
+    public function storeTurnIntentAgainstTurn(Turn $turn, TurnIntentRequest $request)
     {
         /** @var Intent $newIntent */
         $newIntent = Serializer::denormalize($request->get('intent'), Intent::class, 'json');
@@ -87,7 +89,12 @@ class TurnsController extends Controller
 
         $this->createMessageTemplate($savedIntent);
 
-        return new TurnIntentResource($savedIntent, $request->get('order'));
+        $resource = new TurnIntentResource($savedIntent, $request->get('order'));
+
+        /** @var Turn $originalTurn */
+        $originalTurn = ConversationDataClient::getScenarioWithFocusedTurn($turn->getUid());
+
+        return $this->prepareODHeaders($originalTurn, $savedIntent, $resource);
     }
 
     /**

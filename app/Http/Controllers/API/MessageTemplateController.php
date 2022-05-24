@@ -7,11 +7,15 @@ use App\Http\Facades\Serializer;
 use App\Http\Requests\MessageTemplateRequest;
 use App\Http\Resources\MessageTemplateResource;
 use OpenDialogAi\Core\Conversation\DataClients\MessageTemplateDataClient;
+use OpenDialogAi\Core\Conversation\Facades\ConversationDataClient;
 use OpenDialogAi\Core\Conversation\Intent;
 use OpenDialogAi\Core\Conversation\MessageTemplate;
+use OpenDialogAi\Core\Conversation\Turn;
 
 class MessageTemplateController extends Controller
 {
+    use ConversationObjectTrait;
+
     /**
      * @var MessageTemplateDataClient
      */
@@ -32,7 +36,12 @@ class MessageTemplateController extends Controller
 
         $messageTemplate = $this->messageTemplateDataClient->addMessageTemplateToIntent($newMessageTemplate);
 
-        return new MessageTemplateResource($messageTemplate);
+        $resource = new MessageTemplateResource($messageTemplate);
+
+        /** @var Turn $originalIntent */
+        $originalIntent = ConversationDataClient::getScenarioWithFocusedIntent($intent->getUid());
+
+        return $this->prepareODHeaders($originalIntent, $messageTemplate, $resource);
     }
 
     public function show(?Intent $intent, MessageTemplate $messageTemplate)
