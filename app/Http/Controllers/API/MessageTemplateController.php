@@ -51,16 +51,28 @@ class MessageTemplateController extends Controller
 
     public function destroy(?Intent $intent, MessageTemplate $messageTemplate)
     {
-        if ($this->messageTemplateDataClient->deleteMessageTemplate($messageTemplate->getUid())) {
-            return response()->noContent(200);
-        } else {
-            return response('Error deleting message template, check the logs', 500);
-        }
+        $messageTemplate = $this->messageTemplateDataClient->deleteMessageTemplate($messageTemplate->getUid());
+
+        $resource = new MessageTemplateResource($messageTemplate);
+
+        /** @var Turn $originalTurn */
+        $originalIntent = ConversationDataClient::getScenarioWithFocusedIntent($intent->getUid());
+
+        return $this->prepareODHeaders($originalIntent, $messageTemplate, $resource);
     }
 
-    public function update(Intent $intent, MessageTemplateRequest $request): MessageTemplateResource
+    public function update(Intent $intent, MessageTemplateRequest $request)
     {
         $update = Serializer::deserialize($request->getContent(), MessageTemplate::class, 'json');
-        return new MessageTemplateResource($this->messageTemplateDataClient->updateMessageTemplate($update));
+        $update->setIntent($intent);
+
+        $messageTemplate = $this->messageTemplateDataClient->updateMessageTemplate($update);
+
+        $resource = new MessageTemplateResource($messageTemplate);
+
+        /** @var Turn $originalTurn */
+        $originalIntent = ConversationDataClient::getScenarioWithFocusedIntent($intent->getUid());
+
+        return $this->prepareODHeaders($originalIntent, $messageTemplate, $resource);
     }
 }

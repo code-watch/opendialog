@@ -253,7 +253,6 @@ class IntentsTest extends TestCase
             ->with($originalTurn->getUid())
             ->andReturn($originalTurn);
 
-        ConversationDataClient::shouldReceive();
         ConversationDataClient::shouldReceive('addRequestIntent')
             ->once()
             ->with(\Mockery::on(function ($argument) {
@@ -415,7 +414,7 @@ class IntentsTest extends TestCase
 
     public function testAddResponseIntentToTurnVirtualIntentValidation()
     {
-        $fakeTurn = new Turn();
+        $fakeTurn = new Turn($this->createScene());
         $fakeTurn->setUid('0x0004');
         $fakeTurn->setName('New Example turn 1');
         $fakeTurn->setOdId('new_example_turn_1');
@@ -514,7 +513,7 @@ class IntentsTest extends TestCase
 
     public function testUpdateTurnIntentByTurnAndIntentUid()
     {
-        $fakeTurn = new Turn();
+        $fakeTurn = new Turn($this->createScene());
         $fakeTurn->setUid('0x0004');
         $fakeTurn->setName('New Example turn 1');
         $fakeTurn->setOdId('new_example_turn_1');
@@ -536,6 +535,11 @@ class IntentsTest extends TestCase
         ConversationDataClient::shouldReceive('getTurnByUid')
             ->once()
             ->with($fakeTurn->getUid(), false)
+            ->andReturn($fakeTurn);
+
+        ConversationDataClient::shouldReceive('getScenarioWithFocusedTurn')
+            ->once()
+            ->with($fakeTurn->getUid())
             ->andReturn($fakeTurn);
 
         ConversationDataClient::shouldReceive('getIntentByUid')
@@ -739,7 +743,7 @@ class IntentsTest extends TestCase
         ConversationDataClient::shouldReceive('deleteIntentByUid')
             ->once()
             ->with($fakeIntent->getUid())
-            ->andReturn(true);
+            ->andReturn($fakeIntent);
 
         $this->actingAs($this->user, 'api')
             ->json('DELETE', '/admin/api/conversation-builder/intents/' . $fakeIntent->getUid())
@@ -797,6 +801,12 @@ class IntentsTest extends TestCase
                 return $turn;
             });
 
+        ConversationDataClient::shouldReceive('getScenarioWithFocusedTurn')
+            ->once()
+            ->andReturnUsing(function ($uid) use ($turn) {
+                return $turn;
+            });
+
         // The OD ID should be the same because it is used for interpretation purposes and is therefore not expected to be unique
         $this->actingAs($this->user, 'api')
             ->json('POST', '/admin/api/conversation-builder/intents/' . $intent->getUid() . '/duplicate')
@@ -831,6 +841,12 @@ class IntentsTest extends TestCase
 
         // Called in the controller, getting parent & sibling data
         ConversationDataClient::shouldReceive('getTurnByUid')
+            ->once()
+            ->andReturnUsing(function ($uid) use ($turn) {
+                return $turn;
+            });
+
+        ConversationDataClient::shouldReceive('getScenarioWithFocusedTurn')
             ->once()
             ->andReturnUsing(function ($uid) use ($turn) {
                 return $turn;
@@ -928,6 +944,13 @@ class IntentsTest extends TestCase
         // Called in the controller and in the request class
         ConversationDataClient::shouldReceive('getTurnByUid')
             ->twice()
+            ->withArgs([$destinationTurn->getUid()])
+            ->andReturnUsing(function ($uid) use ($turn) {
+                return $turn;
+            });
+
+        ConversationDataClient::shouldReceive('getScenarioWithFocusedTurn')
+            ->once()
             ->withArgs([$destinationTurn->getUid()])
             ->andReturnUsing(function ($uid) use ($turn) {
                 return $turn;

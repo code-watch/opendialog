@@ -8,8 +8,8 @@ use App\Http\Facades\Serializer;
 use App\Http\Requests\ConversationObjectDuplicationRequest;
 use App\Http\Requests\IntentDuplicationRequest;
 use App\Http\Requests\IntentRequest;
-use App\Http\Resources\ScenarioIntentCollection;
 use App\Http\Resources\IntentResource;
+use App\Http\Resources\ScenarioIntentCollection;
 use Illuminate\Http\Response;
 use OpenDialogAi\Core\Conversation\Facades\ConversationDataClient;
 use OpenDialogAi\Core\Conversation\Facades\IntentDataClient;
@@ -18,6 +18,8 @@ use OpenDialogAi\Core\Conversation\Scenario;
 
 class IntentsController extends Controller
 {
+    use ConversationObjectTrait;
+
     /**
      * Create a new controller instance.
      *
@@ -73,7 +75,7 @@ class IntentsController extends Controller
      * @param Intent $intent
      * @return IntentResource
      */
-    public function duplicate(IntentDuplicationRequest $request, Intent $intent): IntentResource
+    public function duplicate(IntentDuplicationRequest $request, Intent $intent)
     {
         $isRequest = $intent->isRequestIntent();
         $intent = IntentDataClient::getFullIntentGraph($intent->getUid());
@@ -101,7 +103,11 @@ class IntentsController extends Controller
         $duplicate = IntentDataClient::addFullIntentGraph($intent, $isRequest);
         $duplicate = IntentDataClient::getFullIntentGraph($duplicate->getUid());
 
-        return new IntentResource($duplicate);
+        $resource =  new IntentResource($duplicate);
+
+        $originalTurn = ConversationDataClient::getScenarioWithFocusedTurn($turn->getUid());
+
+        return $this->prepareODHeaders($originalTurn, $duplicate, $resource);
     }
 
     public function getAllIntents(Scenario $scenario)

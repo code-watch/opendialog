@@ -9,11 +9,13 @@ use App\Http\Requests\ConversationObjectDuplicationRequest;
 use App\Http\Requests\DeleteTurnRequest;
 use App\Http\Requests\TurnIntentRequest;
 use App\Http\Requests\TurnRequest;
+use App\Http\Resources\IntentResource;
 use App\Http\Resources\TurnIntentResource;
 use App\Http\Resources\TurnIntentResourceCollection;
 use App\Http\Resources\TurnResource;
 use App\Rules\TurnInTransition;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
@@ -171,33 +173,42 @@ class TurnsController extends Controller
      * @param TurnIntentRequest $request
      * @param Turn $turn
      * @param Intent $intent
-     * @return TurnIntentResource
+     * @return JsonResponse|JsonResource
      */
-    public function updateTurnIntent(TurnIntentRequest $request, Turn $turn, Intent $intent) : TurnIntentResource
+    public function updateTurnIntent(TurnIntentRequest $request, Turn $turn, Intent $intent)
     {
         $patchIntent = Serializer::denormalize($request->get('intent'), Intent::class, 'json');
         $patchIntent->setUid($intent->getUid());
+        $patchIntent->setTurn($turn);
+
         // First update the intent data
         $updatedIntent = ConversationDataClient::updateIntent($patchIntent);
-        $updatedTurnWithIntent =
-            ConversationDataClient::updateTurnIntentRelation($turn->getUid(), $intent->getUid(), $request->get('order'));
+        $updatedTurnWithIntent = ConversationDataClient::updateTurnIntentRelation(
+            $updatedIntent->getTurn()->getUid(),
+            $updatedIntent->getUid(),
+            $request->get('order')
+        );
 
         if ($updatedTurnWithIntent->getRequestIntents()->count() > 0) {
-            return new TurnIntentResource($updatedTurnWithIntent->getRequestIntents()->first(), 'REQUEST');
+            $resource = new TurnIntentResource($updatedTurnWithIntent->getRequestIntents()->first(), 'REQUEST');
         } elseif ($updatedTurnWithIntent->getResponseIntents()->count() > 0) {
-            return new TurnIntentResource($updatedTurnWithIntent->getResponseIntents()->first(), 'RESPONSE');
+            $resource = new TurnIntentResource($updatedTurnWithIntent->getResponseIntents()->first(), 'RESPONSE');
         }
+
+        $originalTurn = ConversationDataClient::getScenarioWithFocusedTurn($turn->getUid());
+
+        return $this->prepareODHeaders($originalTurn, $updatedIntent, $resource);
     }
 
-    public function destroyTurnIntent(Turn $turn, Intent $intent) : Response
+    public function destroyTurnIntent(Turn $turn, Intent $intent)
     {
-        ConversationDataClient::deleteTurnIntent($turn->getUid(), $intent->getUid());
+        $intent = ConversationDataClient::deleteIntentByUid($intent->getUid());
 
-        if (ConversationDataClient::deleteIntentByUid($intent->getUid())) {
-            return response()->noContent(200);
-        } else {
-            return response('Error deleting conversation, check the logs', 500);
-        }
+        $resource = new IntentResource($intent);
+
+        $originalTurn = ConversationDataClient::getScenarioWithFocusedTurn($turn->getUid());
+
+        return $this->prepareODHeaders($originalTurn, $intent, $resource);
     }
 
     /**
