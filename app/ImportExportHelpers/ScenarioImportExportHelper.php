@@ -176,7 +176,6 @@ class ScenarioImportExportHelper extends BaseImportExportHelper
         }
 
         $persistedScenario = ScenarioDataClient::addFullScenarioGraph($importingScenario);
-        $persistedScenario = ScenarioDataClient::getFullScenarioGraph($persistedScenario->getUid());
 
         $map = PathSubstitutionHelper::createScenarioMap($persistedScenario);
 
