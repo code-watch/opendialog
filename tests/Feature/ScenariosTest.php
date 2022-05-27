@@ -677,7 +677,7 @@ class ScenariosTest extends TestCase
             ->andReturn($fakeScenarioCreated);
 
         ScenarioDataClient::shouldReceive('getFullScenarioGraph')
-            ->twice()
+            ->once()
             ->andReturn($fakeScenarioCreated);
 
         ConversationDataClient::shouldReceive('updateIntent')
