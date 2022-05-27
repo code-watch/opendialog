@@ -3,23 +3,26 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Console\Facades\ImportExportSerializer;
 use App\Http\Controllers\Controller;
 use App\Http\Facades\Serializer;
 use App\Http\Requests\ConversationObjectDuplicationRequest;
 use App\Http\Requests\DeleteTurnRequest;
 use App\Http\Requests\TurnIntentRequest;
 use App\Http\Requests\TurnRequest;
+use App\Http\Resources\IntentResource;
 use App\Http\Resources\TurnIntentResource;
 use App\Http\Resources\TurnIntentResourceCollection;
 use App\Http\Resources\TurnResource;
-use App\ImportExportHelpers\PathSubstitutionHelper;
-use App\ImportExportHelpers\ScenarioImportExportHelper;
 use App\Rules\TurnInTransition;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
+use OpenDialogAi\ConversationEngine\Reasoners\IntentInterpreterFilter;
+use OpenDialogAi\Core\Components\Configuration\ComponentConfigurationKey;
+use OpenDialogAi\Core\Components\Configuration\ConfigurationDataHelper;
+use OpenDialogAi\Core\Components\Exceptions\ConfigurationNotRegistered;
 use OpenDialogAi\Core\Conversation\DataClients\Serializers\Normalizers\ImportExport\ScenarioNormalizer;
 use OpenDialogAi\Core\Conversation\Facades\ConversationDataClient;
 use OpenDialogAi\Core\Conversation\Facades\MessageTemplateDataClient;
@@ -28,10 +31,16 @@ use OpenDialogAi\Core\Conversation\Intent;
 use OpenDialogAi\Core\Conversation\MessageTemplate;
 use OpenDialogAi\Core\Conversation\Transition;
 use OpenDialogAi\Core\Conversation\Turn;
-use OpenDialogAi\MessageBuilder\MessageMarkUpGenerator;
+use OpenDialogAi\Core\ImportExportHelpers\Facades\ImportExportSerializer;
+use OpenDialogAi\Core\ImportExportHelpers\PathSubstitutionHelper;
+use OpenDialogAi\Core\ImportExportHelpers\ScenarioImportExportHelper;
+use OpenDialogAi\Core\InterpreterEngine\Service\ConfiguredInterpreterServiceInterface;
+use OpenDialogAi\InterpreterEngine\Interpreters\OpenDialogInterpreter;
 
 class TurnsController extends Controller
 {
+    use ConversationObjectTrait;
+
     /**
      * Create a new controller instance.
      *
@@ -69,9 +78,9 @@ class TurnsController extends Controller
      * @param  Turn               $turn
      * @param  TurnIntentRequest  $request
      *
-     * @return TurnIntentResource
+     * @return TurnIntentResource|JsonResponse
      */
-    public function storeTurnIntentAgainstTurn(Turn $turn, TurnIntentRequest $request): TurnIntentResource
+    public function storeTurnIntentAgainstTurn(Turn $turn, TurnIntentRequest $request)
     {
         /** @var Intent $newIntent */
         $newIntent = Serializer::denormalize($request->get('intent'), Intent::class, 'json');
@@ -87,7 +96,12 @@ class TurnsController extends Controller
 
         $this->createMessageTemplate($savedIntent);
 
-        return new TurnIntentResource($savedIntent, $request->get('order'));
+        $resource = new TurnIntentResource($savedIntent, $request->get('order'));
+
+        /** @var Turn $originalTurn */
+        $originalTurn = ConversationDataClient::getScenarioWithFocusedTurn($turn->getUid());
+
+        return $this->prepareODHeaders($originalTurn, $savedIntent, $resource);
     }
 
     /**
@@ -159,33 +173,42 @@ class TurnsController extends Controller
      * @param TurnIntentRequest $request
      * @param Turn $turn
      * @param Intent $intent
-     * @return TurnIntentResource
+     * @return JsonResponse|JsonResource
      */
-    public function updateTurnIntent(TurnIntentRequest $request, Turn $turn, Intent $intent) : TurnIntentResource
+    public function updateTurnIntent(TurnIntentRequest $request, Turn $turn, Intent $intent)
     {
         $patchIntent = Serializer::denormalize($request->get('intent'), Intent::class, 'json');
         $patchIntent->setUid($intent->getUid());
+        $patchIntent->setTurn($turn);
+
         // First update the intent data
         $updatedIntent = ConversationDataClient::updateIntent($patchIntent);
-        $updatedTurnWithIntent =
-            ConversationDataClient::updateTurnIntentRelation($turn->getUid(), $intent->getUid(), $request->get('order'));
+        $updatedTurnWithIntent = ConversationDataClient::updateTurnIntentRelation(
+            $updatedIntent->getTurn()->getUid(),
+            $updatedIntent->getUid(),
+            $request->get('order')
+        );
 
         if ($updatedTurnWithIntent->getRequestIntents()->count() > 0) {
-            return new TurnIntentResource($updatedTurnWithIntent->getRequestIntents()->first(), 'REQUEST');
+            $resource = new TurnIntentResource($updatedTurnWithIntent->getRequestIntents()->first(), 'REQUEST');
         } elseif ($updatedTurnWithIntent->getResponseIntents()->count() > 0) {
-            return new TurnIntentResource($updatedTurnWithIntent->getResponseIntents()->first(), 'RESPONSE');
+            $resource = new TurnIntentResource($updatedTurnWithIntent->getResponseIntents()->first(), 'RESPONSE');
         }
+
+        $originalTurn = ConversationDataClient::getScenarioWithFocusedTurn($turn->getUid());
+
+        return $this->prepareODHeaders($originalTurn, $updatedIntent, $resource);
     }
 
-    public function destroyTurnIntent(Turn $turn, Intent $intent) : Response
+    public function destroyTurnIntent(Turn $turn, Intent $intent)
     {
-        ConversationDataClient::deleteTurnIntent($turn->getUid(), $intent->getUid());
+        $intent = ConversationDataClient::deleteIntentByUid($intent->getUid());
 
-        if (ConversationDataClient::deleteIntentByUid($intent->getUid())) {
-            return response()->noContent(200);
-        } else {
-            return response('Error deleting conversation, check the logs', 500);
-        }
+        $resource = new IntentResource($intent);
+
+        $originalTurn = ConversationDataClient::getScenarioWithFocusedTurn($turn->getUid());
+
+        return $this->prepareODHeaders($originalTurn, $intent, $resource);
     }
 
     /**
@@ -200,13 +223,36 @@ class TurnsController extends Controller
                 sprintf('Creating a new intent and message template for intent %s as the speaker was APP', $intent->getName())
             );
 
+            $sampleUtterance = $intent->getSampleUtterance();
+
+            // Ensure the intent has a full interpreter hierarchy
+            $turn = ConversationDataClient::getScenarioWithFocusedTurn($intent->getTurn()->getUid());
+            $intent->setTurn($turn);
+
+            $interpreterName = IntentInterpreterFilter::getInterpreter($intent);
+
+            if (is_null($interpreterName) || $interpreterName === '') {
+                $interpreterName = ConfigurationDataHelper::OPENDIALOG_INTERPRETER;
+            }
+
+            $scenarioUid = $intent->getScenario()->getUid();
+            $key = new ComponentConfigurationKey($scenarioUid, $interpreterName);
+
+            /** @var ConfiguredInterpreterServiceInterface $service */
+            $service = resolve(ConfiguredInterpreterServiceInterface::class);
+
+            try {
+                $interpreter = $service->get($key);
+                $messageMarkup = $interpreter->getDefaultMessageMarkup($sampleUtterance);
+            } catch (ConfigurationNotRegistered $e) {
+                $messageMarkup = OpenDialogInterpreter::getDefaultMessageMarkup($sampleUtterance);
+            }
+
             $messageTemplate = new MessageTemplate();
             $messageTemplate->setName('auto generated');
             $messageTemplate->setOdId('auto_generated');
             $messageTemplate->setIntent($intent);
-            $messageTemplate->setMessageMarkup(
-                (new MessageMarkUpGenerator())->addTextMessage($intent->getSampleUtterance())->getMarkUp()
-            );
+            $messageTemplate->setMessageMarkup($messageMarkup);
             $messageTemplate->setOrder(0);
 
             MessageTemplateDataClient::addMessageTemplateToIntent($messageTemplate);

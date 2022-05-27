@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "dbe6becb4cbc314f60a573e4dd485257",
+    "content-hash": "b3e64f0bab46eca2bab13af2fca418f3",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -938,71 +938,6 @@
             "time": "2022-01-18T15:43:28+00:00"
         },
         {
-            "name": "dyrynda/laravel-model-uuid",
-            "version": "6.6.3",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/michaeldyrynda/laravel-model-uuid.git",
-                "reference": "ce78fced3eb86b0f8d95bf18609b34bde7de0cf6"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/michaeldyrynda/laravel-model-uuid/zipball/ce78fced3eb86b0f8d95bf18609b34bde7de0cf6",
-                "reference": "ce78fced3eb86b0f8d95bf18609b34bde7de0cf6",
-                "shasum": ""
-            },
-            "require": {
-                "illuminate/database": "^8.12|^9.0",
-                "illuminate/events": "^8.12|^9.0",
-                "illuminate/support": "^8.12|^9.0",
-                "php": "^7.3|^8.0",
-                "ramsey/uuid": "^4.1"
-            },
-            "require-dev": {
-                "dyrynda/laravel-efficient-uuid": "^4.5.2",
-                "laravel/legacy-factories": "^1.0.4",
-                "orchestra/testbench": "^6.0|^7.0",
-                "phpunit/phpunit": "^9.3"
-            },
-            "suggest": {
-                "dyrynda/laravel-efficient-uuid": "Override Laravel's default query grammar to efficiently store UUIDs."
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-main": "6.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Dyrynda\\Database\\Support\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Michael Dyrynda",
-                    "email": "michael@dyrynda.com.au",
-                    "homepage": "https://dyrynda.com.au"
-                }
-            ],
-            "description": "This package allows you to easily work with UUIDs in your Laravel models.",
-            "keywords": [
-                "eloquent",
-                "laravel",
-                "model",
-                "uuid"
-            ],
-            "support": {
-                "issues": "https://github.com/michaeldyrynda/laravel-model-uuid/issues",
-                "source": "https://github.com/michaeldyrynda/laravel-model-uuid/tree/6.6.3"
-            },
-            "time": "2022-03-07T05:21:07+00:00"
-        },
-        {
             "name": "egulias/email-validator",
             "version": "2.1.25",
             "source": {
@@ -1724,16 +1659,16 @@
         },
         {
             "name": "guzzlehttp/guzzle",
-            "version": "7.4.0",
+            "version": "7.4.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/guzzle.git",
-                "reference": "868b3571a039f0ebc11ac8f344f4080babe2cb94"
+                "reference": "74a8602c6faec9ef74b7a9391ac82c5e65b1cdab"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/868b3571a039f0ebc11ac8f344f4080babe2cb94",
-                "reference": "868b3571a039f0ebc11ac8f344f4080babe2cb94",
+                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/74a8602c6faec9ef74b7a9391ac82c5e65b1cdab",
+                "reference": "74a8602c6faec9ef74b7a9391ac82c5e65b1cdab",
                 "shasum": ""
             },
             "require": {
@@ -1742,7 +1677,7 @@
                 "guzzlehttp/psr7": "^1.8.3 || ^2.1",
                 "php": "^7.2.5 || ^8.0",
                 "psr/http-client": "^1.0",
-                "symfony/deprecation-contracts": "^2.2"
+                "symfony/deprecation-contracts": "^2.2 || ^3.0"
             },
             "provide": {
                 "psr/http-client-implementation": "1.0"
@@ -1766,12 +1701,12 @@
                 }
             },
             "autoload": {
-                "psr-4": {
-                    "GuzzleHttp\\": "src/"
-                },
                 "files": [
                     "src/functions_include.php"
-                ]
+                ],
+                "psr-4": {
+                    "GuzzleHttp\\": "src/"
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -1828,7 +1763,7 @@
             ],
             "support": {
                 "issues": "https://github.com/guzzle/guzzle/issues",
-                "source": "https://github.com/guzzle/guzzle/tree/7.4.0"
+                "source": "https://github.com/guzzle/guzzle/tree/7.4.3"
             },
             "funding": [
                 {
@@ -1844,20 +1779,20 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-10-18T09:52:00+00:00"
+            "time": "2022-05-25T13:24:33+00:00"
         },
         {
             "name": "guzzlehttp/promises",
-            "version": "1.5.0",
+            "version": "1.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/promises.git",
-                "reference": "136a635e2b4a49b9d79e9c8fee267ffb257fdba0"
+                "reference": "fe752aedc9fd8fcca3fe7ad05d419d32998a06da"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/promises/zipball/136a635e2b4a49b9d79e9c8fee267ffb257fdba0",
-                "reference": "136a635e2b4a49b9d79e9c8fee267ffb257fdba0",
+                "url": "https://api.github.com/repos/guzzle/promises/zipball/fe752aedc9fd8fcca3fe7ad05d419d32998a06da",
+                "reference": "fe752aedc9fd8fcca3fe7ad05d419d32998a06da",
                 "shasum": ""
             },
             "require": {
@@ -1873,12 +1808,12 @@
                 }
             },
             "autoload": {
-                "psr-4": {
-                    "GuzzleHttp\\Promise\\": "src/"
-                },
                 "files": [
                     "src/functions_include.php"
-                ]
+                ],
+                "psr-4": {
+                    "GuzzleHttp\\Promise\\": "src/"
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -1912,7 +1847,7 @@
             ],
             "support": {
                 "issues": "https://github.com/guzzle/promises/issues",
-                "source": "https://github.com/guzzle/promises/tree/1.5.0"
+                "source": "https://github.com/guzzle/promises/tree/1.5.1"
             },
             "funding": [
                 {
@@ -1928,7 +1863,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-10-07T13:05:22+00:00"
+            "time": "2021-10-22T20:56:57+00:00"
         },
         {
             "name": "guzzlehttp/psr7",
@@ -3390,22 +3325,21 @@
         },
         {
             "name": "opendialogai/core",
-            "version": "dev-feature/OPNDLG-1502_replace_all_data_clients",
+            "version": "1.x-dev",
             "source": {
                 "type": "git",
                 "url": "https://github.com/opendialogai/core.git",
-                "reference": "4230d764fa11aac6f332f513ba054d03041379ec"
+                "reference": "1dee55bacdaf99c893f6c85797378e2bc4b8c27d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/opendialogai/core/zipball/4230d764fa11aac6f332f513ba054d03041379ec",
-                "reference": "4230d764fa11aac6f332f513ba054d03041379ec",
+                "url": "https://api.github.com/repos/opendialogai/core/zipball/1dee55bacdaf99c893f6c85797378e2bc4b8c27d",
+                "reference": "1dee55bacdaf99c893f6c85797378e2bc4b8c27d",
                 "shasum": ""
             },
             "require": {
                 "aws/aws-sdk-php": "^3.198",
                 "doctrine/dbal": "^2.11",
-                "dyrynda/laravel-model-uuid": "^6.6",
                 "ext-intl": "*",
                 "ext-json": "*",
                 "google/cloud-dialogflow": "dev-V2Beta1-support",
@@ -3416,7 +3350,6 @@
                 "php": "^7.4.0 || ^8.0",
                 "php-ds/php-ds": "^1.2",
                 "spatie/laravel-event-sourcing": "^4.10.2",
-                "staudenmeir/laravel-adjacency-list": "^1.0",
                 "symfony/property-access": "^5.2",
                 "symfony/serializer": "^5.2",
                 "symfony/yaml": "^5.2"
@@ -3432,6 +3365,7 @@
                 "phpunit/phpunit": "^9.0",
                 "squizlabs/php_codesniffer": "^3.4"
             },
+            "default-branch": true,
             "type": "library",
             "extra": {
                 "laravel": {
@@ -3486,9 +3420,9 @@
             "description": "The OpenDialog Core package",
             "support": {
                 "issues": "https://github.com/opendialogai/core/issues",
-                "source": "https://github.com/opendialogai/core/tree/feature/OPNDLG-1502_replace_all_data_clients"
+                "source": "https://github.com/opendialogai/core/tree/1.x"
             },
-            "time": "2022-05-23T11:46:54+00:00"
+            "time": "2022-05-26T13:39:22+00:00"
         },
         {
             "name": "opendialogai/dgraph-docker",
@@ -3532,16 +3466,16 @@
         },
         {
             "name": "opendialogai/webchat",
-            "version": "1.7.2",
+            "version": "1.7.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/opendialogai/webchat.git",
-                "reference": "7f71e1ae7ca56b9a2da6903a9723f6d944cd71c9"
+                "reference": "e8460c3c28a20f54ed42b6755fb00693823d3d56"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/opendialogai/webchat/zipball/7f71e1ae7ca56b9a2da6903a9723f6d944cd71c9",
-                "reference": "7f71e1ae7ca56b9a2da6903a9723f6d944cd71c9",
+                "url": "https://api.github.com/repos/opendialogai/webchat/zipball/e8460c3c28a20f54ed42b6755fb00693823d3d56",
+                "reference": "e8460c3c28a20f54ed42b6755fb00693823d3d56",
                 "shasum": ""
             },
             "require": {
@@ -3583,9 +3517,9 @@
             "description": "Webchat front end component for the Open Dialog project",
             "support": {
                 "issues": "https://github.com/opendialogai/webchat/issues",
-                "source": "https://github.com/opendialogai/webchat/tree/1.7.2"
+                "source": "https://github.com/opendialogai/webchat/tree/1.7.3"
             },
-            "time": "2022-03-28T13:50:57+00:00"
+            "time": "2022-04-12T16:25:25+00:00"
         },
         {
             "name": "opis/closure",
@@ -5176,108 +5110,6 @@
             "time": "2020-11-04T13:21:43+00:00"
         },
         {
-            "name": "staudenmeir/laravel-adjacency-list",
-            "version": "v1.9.6",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/staudenmeir/laravel-adjacency-list.git",
-                "reference": "ee00934926af3305b37b6fa3e8f673f8af5dd749"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/staudenmeir/laravel-adjacency-list/zipball/ee00934926af3305b37b6fa3e8f673f8af5dd749",
-                "reference": "ee00934926af3305b37b6fa3e8f673f8af5dd749",
-                "shasum": ""
-            },
-            "require": {
-                "illuminate/database": "^8.0",
-                "php": "^7.3|^8.0",
-                "staudenmeir/laravel-cte": "^1.5.3"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^9.3"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Staudenmeir\\LaravelAdjacencyList\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Jonas Staudenmeir",
-                    "email": "mail@jonas-staudenmeir.de"
-                }
-            ],
-            "description": "Recursive Laravel Eloquent relationships with CTEs",
-            "support": {
-                "issues": "https://github.com/staudenmeir/laravel-adjacency-list/issues",
-                "source": "https://github.com/staudenmeir/laravel-adjacency-list/tree/v1.9.6"
-            },
-            "funding": [
-                {
-                    "url": "https://paypal.me/JonasStaudenmeir",
-                    "type": "custom"
-                }
-            ],
-            "time": "2022-04-25T19:22:59+00:00"
-        },
-        {
-            "name": "staudenmeir/laravel-cte",
-            "version": "v1.5.4",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/staudenmeir/laravel-cte.git",
-                "reference": "e7820d09db090eafebc0e41eedb0e2a8a95a676c"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/staudenmeir/laravel-cte/zipball/e7820d09db090eafebc0e41eedb0e2a8a95a676c",
-                "reference": "e7820d09db090eafebc0e41eedb0e2a8a95a676c",
-                "shasum": ""
-            },
-            "require": {
-                "illuminate/database": "^8.0",
-                "php": "^7.3|^8.0"
-            },
-            "require-dev": {
-                "orchestra/testbench": "^6.22"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Staudenmeir\\LaravelCte\\DatabaseServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Staudenmeir\\LaravelCte\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Jonas Staudenmeir",
-                    "email": "mail@jonas-staudenmeir.de"
-                }
-            ],
-            "description": "Laravel queries with common table expressions",
-            "support": {
-                "issues": "https://github.com/staudenmeir/laravel-cte/issues",
-                "source": "https://github.com/staudenmeir/laravel-cte/tree/v1.5.4"
-            },
-            "time": "2022-01-17T19:31:13+00:00"
-        },
-        {
             "name": "swiftmailer/swiftmailer",
             "version": "v6.3.0",
             "source": {
@@ -5520,16 +5352,16 @@
         },
         {
             "name": "symfony/deprecation-contracts",
-            "version": "v2.5.0",
+            "version": "v2.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/deprecation-contracts.git",
-                "reference": "6f981ee24cf69ee7ce9736146d1c57c2780598a8"
+                "reference": "e8b495ea28c1d97b5e0c121748d6f9b53d075c66"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/deprecation-contracts/zipball/6f981ee24cf69ee7ce9736146d1c57c2780598a8",
-                "reference": "6f981ee24cf69ee7ce9736146d1c57c2780598a8",
+                "url": "https://api.github.com/repos/symfony/deprecation-contracts/zipball/e8b495ea28c1d97b5e0c121748d6f9b53d075c66",
+                "reference": "e8b495ea28c1d97b5e0c121748d6f9b53d075c66",
                 "shasum": ""
             },
             "require": {
@@ -5567,7 +5399,7 @@
             "description": "A generic function and convention to trigger deprecation notices",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/deprecation-contracts/tree/v2.5.0"
+                "source": "https://github.com/symfony/deprecation-contracts/tree/v2.5.1"
             },
             "funding": [
                 {
@@ -5583,7 +5415,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-07-12T14:48:14+00:00"
+            "time": "2022-01-02T09:53:40+00:00"
         },
         {
             "name": "symfony/error-handler",
@@ -6399,7 +6231,7 @@
         },
         {
             "name": "symfony/polyfill-intl-idn",
-            "version": "v1.24.0",
+            "version": "v1.25.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-intl-idn.git",
@@ -6466,7 +6298,7 @@
                 "shim"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-intl-idn/tree/v1.24.0"
+                "source": "https://github.com/symfony/polyfill-intl-idn/tree/v1.25.0"
             },
             "funding": [
                 {
@@ -6486,7 +6318,7 @@
         },
         {
             "name": "symfony/polyfill-intl-normalizer",
-            "version": "v1.24.0",
+            "version": "v1.25.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-intl-normalizer.git",
@@ -6550,7 +6382,7 @@
                 "shim"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-intl-normalizer/tree/v1.24.0"
+                "source": "https://github.com/symfony/polyfill-intl-normalizer/tree/v1.25.0"
             },
             "funding": [
                 {
@@ -6570,7 +6402,7 @@
         },
         {
             "name": "symfony/polyfill-mbstring",
-            "version": "v1.24.0",
+            "version": "v1.25.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-mbstring.git",
@@ -6633,7 +6465,7 @@
                 "shim"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-mbstring/tree/v1.24.0"
+                "source": "https://github.com/symfony/polyfill-mbstring/tree/v1.25.0"
             },
             "funding": [
                 {
@@ -6653,7 +6485,7 @@
         },
         {
             "name": "symfony/polyfill-php72",
-            "version": "v1.24.0",
+            "version": "v1.25.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-php72.git",
@@ -6709,7 +6541,7 @@
                 "shim"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-php72/tree/v1.24.0"
+                "source": "https://github.com/symfony/polyfill-php72/tree/v1.25.0"
             },
             "funding": [
                 {
@@ -12241,5 +12073,5 @@
         "ext-simplexml": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.0.0"
+    "plugin-api-version": "2.3.0"
 }

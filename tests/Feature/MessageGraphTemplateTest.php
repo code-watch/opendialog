@@ -123,7 +123,7 @@ class MessageGraphTemplateTest extends TestCase
             ->andReturn($intent);
 
         ConversationDataClient::shouldReceive('getScenarioWithFocusedIntent')
-            ->once()
+            ->twice()
             ->with('0x00001')
             ->andReturn($intent);
 
@@ -144,6 +144,7 @@ class MessageGraphTemplateTest extends TestCase
         $createdMessageTemplate->setUid('0x00002');
         $createdMessageTemplate->setCreatedAt(Carbon::parse('2021-02-24T09:30:00+0000'));
         $createdMessageTemplate->setUpdatedAt(Carbon::parse('2021-02-24T09:30:00+0000'));
+        $createdMessageTemplate->setIntent($intent);
 
         MessageTemplateDataClient::shouldReceive('addMessageTemplateToIntent')
             ->once()
