@@ -723,12 +723,9 @@ class ScenariosTest extends TestCase
 
         // Called in controller
         ScenarioDataClient::shouldReceive('getFullScenarioGraph')
-            ->times(3)
+            ->times(2)
             ->andReturnUsing(
                 fn () => $scenario,
-                function ($uid) use (&$duplicated) {
-                    return $duplicated;
-                },
                 function ($uid) use (&$duplicated) {
                     $duplicated->setConditions(new ConditionCollection([new Condition(
                         'eq',
@@ -856,11 +853,8 @@ class ScenariosTest extends TestCase
 
         // Called in controller
         ScenarioDataClient::shouldReceive('getFullScenarioGraph')
-            ->twice()
+            ->once()
             ->andReturnUsing(
-                function ($uid) use (&$duplicated) {
-                    return $duplicated;
-                },
                 function ($uid) use (&$duplicated) {
                     $duplicated->setConditions(new ConditionCollection([new Condition(
                         'eq',
