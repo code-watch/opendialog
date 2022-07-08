@@ -154,8 +154,11 @@ class IntentsTest extends TestCase
         $fakeTurn->setName('New Example turn 1');
         $fakeTurn->setOdId('new_example_turn_1');
         $fakeTurn->setDescription("An new example turn 1");
-        $fakeTurn->setRequestIntents(new IntentCollection([
-            $this->createIntent($fakeTurn, '0x006', 'pre-existing', Intent::USER)]
+
+        $existingIntent = $this->createIntent($fakeTurn, '0x006', 'pre-existing', Intent::USER);
+        $existingIntent->setOrder(0);
+
+        $fakeTurn->setRequestIntents(new IntentCollection([$existingIntent]
         ));
 
         $fakeRequestIntent = $this->createIntent($fakeTurn, '0x0005', 'welcome_intent_1', Intent::USER);
@@ -232,9 +235,11 @@ class IntentsTest extends TestCase
         $originalTurn->setName('New Example turn 1');
         $originalTurn->setOdId('new_example_turn_1');
         $originalTurn->setDescription("An new example turn 1");
-        $originalTurn->setRequestIntents(new IntentCollection([
-            $this->createIntent($originalTurn, '0x006', 'pre-existing', Intent::USER)
-        ]));
+
+        $originalIntent = $this->createIntent($originalTurn, '0x006', 'pre-existing', Intent::USER);
+        $originalIntent->setOrder(0);
+
+        $originalTurn->setRequestIntents(new IntentCollection([$originalIntent]));
         $originalScene->setTurns(new TurnCollection([$originalTurn]));
 
         $newTurn = $originalTurn->copy();
@@ -314,10 +319,16 @@ class IntentsTest extends TestCase
         $fakeTurn->setName('New Example turn 1');
         $fakeTurn->setOdId('new_example_turn_1');
         $fakeTurn->setDescription("An new example turn 1");
+
+        $originalIntent1 = $this->createIntent($fakeTurn, '0x006', 'pre-existing1', Intent::USER);
+        $originalIntent1->setOrder(0);
+        $originalIntent2 = $this->createIntent($fakeTurn, '0x007', 'pre-existing2', Intent::USER);
+        $originalIntent2->setOrder(1);
+
         $fakeTurn->setResponseIntents(new IntentCollection(
             [
-                $this->createIntent($fakeTurn, '0x006', 'pre-existing1', Intent::USER),
-                $this->createIntent($fakeTurn, '0x007', 'pre-existing2', Intent::USER)
+                $originalIntent1,
+                $originalIntent2
             ]
         ));
 

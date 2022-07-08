@@ -522,6 +522,8 @@ class ScenariosTest extends TestCase
     public static function getFakeScenarioForDuplication(): Scenario
     {
         $scenario = self::getFakeScenario();
+        $requestIntentOrder = -1;
+        $responseIntentOrder = -1;
 
         $conversation = new Conversation();
         $conversation->setName("Example Conversation");
@@ -559,6 +561,7 @@ class ScenariosTest extends TestCase
         $requestIntent->setCreatedAt(Carbon::now());
         $requestIntent->setUpdatedAt(Carbon::now());
         $requestIntent->setTurn($turns[0]);
+        $requestIntent->setOrder(++$requestIntentOrder);
         $requestIntents[] = $requestIntent;
 
         $responseIntent = new Intent();
@@ -570,6 +573,7 @@ class ScenariosTest extends TestCase
         $responseIntent->setCreatedAt(Carbon::now());
         $responseIntent->setUpdatedAt(Carbon::now());
         $responseIntent->setTurn($turns[0]);
+        $responseIntent->setOrder(++$responseIntentOrder);
         $responseIntents[] = $responseIntent;
 
         $message = new MessageTemplate();
@@ -580,6 +584,7 @@ class ScenariosTest extends TestCase
         $message->setCreatedAt(Carbon::now());
         $message->setUpdatedAt(Carbon::now());
         $message->setIntent($responseIntent);
+        $message->setOrder(0);
 
         $conversation = new Conversation();
         $conversation->setName("Example Conversation copy");
@@ -616,6 +621,7 @@ class ScenariosTest extends TestCase
         $requestIntent->setCreatedAt(Carbon::now());
         $requestIntent->setUpdatedAt(Carbon::now());
         $requestIntent->setTurn($turns[0]);
+        $requestIntent->setOrder(++$requestIntentOrder);
         $requestIntents[] = $requestIntent;
 
         $responseIntent = new Intent();
@@ -626,6 +632,7 @@ class ScenariosTest extends TestCase
         $responseIntent->setCreatedAt(Carbon::now());
         $responseIntent->setUpdatedAt(Carbon::now());
         $responseIntent->setTurn($turns[0]);
+        $responseIntent->setOrder(++$responseIntentOrder);
         $responseIntents[] = $responseIntent;
 
         $turns[0]->setRequestIntents(new IntentCollection($requestIntents));

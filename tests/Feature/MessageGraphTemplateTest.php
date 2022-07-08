@@ -123,7 +123,7 @@ class MessageGraphTemplateTest extends TestCase
             ->andReturn($intent);
 
         ConversationDataClient::shouldReceive('getScenarioWithFocusedIntent')
-            ->twice()
+            ->once()
             ->with('0x00001')
             ->andReturn($intent);
 
