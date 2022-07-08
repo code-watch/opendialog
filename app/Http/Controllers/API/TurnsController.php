@@ -87,10 +87,10 @@ class TurnsController extends Controller
         $newIntent->setTurn($turn);
 
         if ($request->get('order') === 'REQUEST') {
-            $newIntent->setOrder(count($turn->getRequestIntents()));
+            $newIntent->setOrder($turn->getRequestIntents()->getNextOrderNumber());
             $savedIntent = ConversationDataClient::addRequestIntent($newIntent);
         } else {
-            $newIntent->setOrder(count($turn->getResponseIntents()));
+            $newIntent->setOrder($turn->getResponseIntents()->getNextOrderNumber());
             $savedIntent = ConversationDataClient::addResponseIntent($newIntent);
         }
 

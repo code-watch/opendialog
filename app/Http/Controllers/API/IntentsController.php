@@ -93,9 +93,9 @@ class IntentsController extends Controller
         }
 
         if ($isRequest) {
-            $intent->setOrder(count($turn->getRequestIntents()));
+            $intent->setOrder($turn->getRequestIntents()->getNextOrderNumber());
         } else {
-            $intent->setOrder(count($turn->getResponseIntents()));
+            $intent->setOrder($turn->getResponseIntents()->getNextOrderNumber());
         }
 
         $intent->removeUid();
