@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b3e64f0bab46eca2bab13af2fca418f3",
+    "content-hash": "8949805b70f074b8f018377451599fa4",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -936,6 +936,71 @@
                 }
             ],
             "time": "2022-01-18T15:43:28+00:00"
+        },
+        {
+            "name": "dyrynda/laravel-model-uuid",
+            "version": "6.6.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/michaeldyrynda/laravel-model-uuid.git",
+                "reference": "ce78fced3eb86b0f8d95bf18609b34bde7de0cf6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/michaeldyrynda/laravel-model-uuid/zipball/ce78fced3eb86b0f8d95bf18609b34bde7de0cf6",
+                "reference": "ce78fced3eb86b0f8d95bf18609b34bde7de0cf6",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/database": "^8.12|^9.0",
+                "illuminate/events": "^8.12|^9.0",
+                "illuminate/support": "^8.12|^9.0",
+                "php": "^7.3|^8.0",
+                "ramsey/uuid": "^4.1"
+            },
+            "require-dev": {
+                "dyrynda/laravel-efficient-uuid": "^4.5.2",
+                "laravel/legacy-factories": "^1.0.4",
+                "orchestra/testbench": "^6.0|^7.0",
+                "phpunit/phpunit": "^9.3"
+            },
+            "suggest": {
+                "dyrynda/laravel-efficient-uuid": "Override Laravel's default query grammar to efficiently store UUIDs."
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "6.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Dyrynda\\Database\\Support\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Michael Dyrynda",
+                    "email": "michael@dyrynda.com.au",
+                    "homepage": "https://dyrynda.com.au"
+                }
+            ],
+            "description": "This package allows you to easily work with UUIDs in your Laravel models.",
+            "keywords": [
+                "eloquent",
+                "laravel",
+                "model",
+                "uuid"
+            ],
+            "support": {
+                "issues": "https://github.com/michaeldyrynda/laravel-model-uuid/issues",
+                "source": "https://github.com/michaeldyrynda/laravel-model-uuid/tree/6.6.3"
+            },
+            "time": "2022-03-07T05:21:07+00:00"
         },
         {
             "name": "egulias/email-validator",
@@ -3325,21 +3390,22 @@
         },
         {
             "name": "opendialogai/core",
-            "version": "1.x-dev",
+            "version": "dev-feature/OPNDLG-1502_replace_all_data_clients",
             "source": {
                 "type": "git",
                 "url": "https://github.com/opendialogai/core.git",
-                "reference": "1dee55bacdaf99c893f6c85797378e2bc4b8c27d"
+                "reference": "84048f2c1a07d4c7547ecb59748f5a018cb81323"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/opendialogai/core/zipball/1dee55bacdaf99c893f6c85797378e2bc4b8c27d",
-                "reference": "1dee55bacdaf99c893f6c85797378e2bc4b8c27d",
+                "url": "https://api.github.com/repos/opendialogai/core/zipball/84048f2c1a07d4c7547ecb59748f5a018cb81323",
+                "reference": "84048f2c1a07d4c7547ecb59748f5a018cb81323",
                 "shasum": ""
             },
             "require": {
                 "aws/aws-sdk-php": "^3.198",
                 "doctrine/dbal": "^2.11",
+                "dyrynda/laravel-model-uuid": "^6.6",
                 "ext-intl": "*",
                 "ext-json": "*",
                 "google/cloud-dialogflow": "dev-V2Beta1-support",
@@ -3350,6 +3416,7 @@
                 "php": "^7.4.0 || ^8.0",
                 "php-ds/php-ds": "^1.2",
                 "spatie/laravel-event-sourcing": "^4.10.2",
+                "staudenmeir/laravel-adjacency-list": "^1.0",
                 "symfony/property-access": "^5.2",
                 "symfony/serializer": "^5.2",
                 "symfony/yaml": "^5.2"
@@ -3365,7 +3432,6 @@
                 "phpunit/phpunit": "^9.0",
                 "squizlabs/php_codesniffer": "^3.4"
             },
-            "default-branch": true,
             "type": "library",
             "extra": {
                 "laravel": {
@@ -3420,9 +3486,9 @@
             "description": "The OpenDialog Core package",
             "support": {
                 "issues": "https://github.com/opendialogai/core/issues",
-                "source": "https://github.com/opendialogai/core/tree/1.x"
+                "source": "https://github.com/opendialogai/core/tree/feature/OPNDLG-1502_replace_all_data_clients"
             },
-            "time": "2022-05-26T13:39:22+00:00"
+            "time": "2022-05-30T12:11:29+00:00"
         },
         {
             "name": "opendialogai/dgraph-docker",
@@ -5108,6 +5174,108 @@
                 }
             ],
             "time": "2020-11-04T13:21:43+00:00"
+        },
+        {
+            "name": "staudenmeir/laravel-adjacency-list",
+            "version": "v1.9.6",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/staudenmeir/laravel-adjacency-list.git",
+                "reference": "ee00934926af3305b37b6fa3e8f673f8af5dd749"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/staudenmeir/laravel-adjacency-list/zipball/ee00934926af3305b37b6fa3e8f673f8af5dd749",
+                "reference": "ee00934926af3305b37b6fa3e8f673f8af5dd749",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/database": "^8.0",
+                "php": "^7.3|^8.0",
+                "staudenmeir/laravel-cte": "^1.5.3"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Staudenmeir\\LaravelAdjacencyList\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jonas Staudenmeir",
+                    "email": "mail@jonas-staudenmeir.de"
+                }
+            ],
+            "description": "Recursive Laravel Eloquent relationships with CTEs",
+            "support": {
+                "issues": "https://github.com/staudenmeir/laravel-adjacency-list/issues",
+                "source": "https://github.com/staudenmeir/laravel-adjacency-list/tree/v1.9.6"
+            },
+            "funding": [
+                {
+                    "url": "https://paypal.me/JonasStaudenmeir",
+                    "type": "custom"
+                }
+            ],
+            "time": "2022-04-25T19:22:59+00:00"
+        },
+        {
+            "name": "staudenmeir/laravel-cte",
+            "version": "v1.5.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/staudenmeir/laravel-cte.git",
+                "reference": "e7820d09db090eafebc0e41eedb0e2a8a95a676c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/staudenmeir/laravel-cte/zipball/e7820d09db090eafebc0e41eedb0e2a8a95a676c",
+                "reference": "e7820d09db090eafebc0e41eedb0e2a8a95a676c",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/database": "^8.0",
+                "php": "^7.3|^8.0"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^6.22"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Staudenmeir\\LaravelCte\\DatabaseServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Staudenmeir\\LaravelCte\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jonas Staudenmeir",
+                    "email": "mail@jonas-staudenmeir.de"
+                }
+            ],
+            "description": "Laravel queries with common table expressions",
+            "support": {
+                "issues": "https://github.com/staudenmeir/laravel-cte/issues",
+                "source": "https://github.com/staudenmeir/laravel-cte/tree/v1.5.4"
+            },
+            "time": "2022-01-17T19:31:13+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",
@@ -12073,5 +12241,5 @@
         "ext-simplexml": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.1.0"
 }
