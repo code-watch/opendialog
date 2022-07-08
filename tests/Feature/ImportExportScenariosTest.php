@@ -515,7 +515,7 @@ class ImportExportScenariosTest extends TestCase
 
         // After updates are made we get the full scenario with the updates included now
         ScenarioDataClient::shouldReceive('getFullScenarioGraph')
-            ->times(4)
+            ->times(2)
             ->andReturn($storedExampleScenario, $storedExampleScenario, $storedMinimalScenario, $storedMinimalScenario);
 
         $this->artisan('scenarios:import')
@@ -578,7 +578,7 @@ class ImportExportScenariosTest extends TestCase
 
         // After updates are made we get the full scenario with the updates included now
         ScenarioDataClient::shouldReceive('getFullScenarioGraph')
-            ->times(4)
+            ->times(2)
             ->andReturn($storedExampleScenario, $storedExampleScenario, $storedMinimalScenario, $storedMinimalScenario);
 
         $this->artisan('scenarios:import')
@@ -597,7 +597,7 @@ class ImportExportScenariosTest extends TestCase
         $storedExistingExampleScenario = ScenarioDataClient::addFullScenarioGraph($existingExampleScenario);
         // We've added one scenario, expect one to exist.
         ConversationDataClient::shouldReceive('getAllScenarios')->once()->andReturn(new ScenarioCollection([$storedExistingExampleScenario]));
-        $previousScenarios = ConversationDataClient::getAllScenarios(false);
+        $previousScenarios = ConversationDataClient::getAllScenarios();
         $this->assertCount(1, $previousScenarios);
 
         // Run the Import (Storage mocked)
@@ -612,7 +612,7 @@ class ImportExportScenariosTest extends TestCase
             ->andReturn($storedMinimalScenario);
 
         ScenarioDataClient::shouldReceive('getFullScenarioGraph')
-            ->twice()
+            ->once()
             ->andReturn($storedMinimalScenario, $storedMinimalScenario);
 
         $this->artisan('scenarios:import')
@@ -627,7 +627,7 @@ class ImportExportScenariosTest extends TestCase
             $storedExistingExampleScenario,
             $storedMinimalScenario
         ]));
-        $currentScenarios = ConversationDataClient::getAllScenarios(false);
+        $currentScenarios = ConversationDataClient::getAllScenarios();
         $this->assertCount(2, $currentScenarios);
 
         // The example scenario import was skipped, so it should be unchanged.
@@ -670,10 +670,9 @@ class ImportExportScenariosTest extends TestCase
         ConversationDataClient::shouldReceive('updateIntent')
             ->once();
 
-        // After updates are made we get the full scenario with the updates included now
         ScenarioDataClient::shouldReceive('getFullScenarioGraph')
-            ->times(4)
-            ->andReturn($storedExampleScenario, $storedExampleScenario, $storedMinimalScenario, $storedMinimalScenario);
+            ->twice()
+            ->andReturn($storedExampleScenario, $storedMinimalScenario);
 
         $this->artisan('scenarios:import');
 

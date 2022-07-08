@@ -6,25 +6,16 @@ use App\Http\Controllers\Controller;
 use App\Http\Facades\Serializer;
 use App\Http\Requests\MessageTemplateRequest;
 use App\Http\Resources\MessageTemplateResource;
-use OpenDialogAi\Core\Conversation\DataClients\MessageTemplateDataClient;
-use OpenDialogAi\Core\Conversation\Facades\ConversationDataClient;
+use OpenDialogAi\Core\Conversation\Facades\MessageTemplateDataClient;
 use OpenDialogAi\Core\Conversation\Intent;
 use OpenDialogAi\Core\Conversation\MessageTemplate;
-use OpenDialogAi\Core\Conversation\Turn;
 
 class MessageTemplateController extends Controller
 {
-    use ConversationObjectTrait;
-
-    /**
-     * @var MessageTemplateDataClient
-     */
-    private $messageTemplateDataClient;
 
     public function __construct()
     {
         $this->middleware('auth');
-        $this->messageTemplateDataClient = resolve(MessageTemplateDataClient::class);
     }
 
     public function store(Intent $intent, MessageTemplateRequest $request)
@@ -35,14 +26,9 @@ class MessageTemplateController extends Controller
         $newMessageTemplate->setOrder($intent->getMessageTemplates() ?
             $intent->getMessageTemplates()->getNextOrderNumber() : 0);
 
-        $messageTemplate = $this->messageTemplateDataClient->addMessageTemplateToIntent($newMessageTemplate);
+        $messageTemplate = MessageTemplateDataClient::addMessageTemplateToIntent($newMessageTemplate);
 
-        $resource = new MessageTemplateResource($messageTemplate);
-
-        /** @var Turn $originalIntent */
-        $originalIntent = ConversationDataClient::getScenarioWithFocusedIntent($intent->getUid());
-
-        return $this->prepareODHeaders($originalIntent, $messageTemplate, $resource);
+        return new MessageTemplateResource($messageTemplate);
     }
 
     public function show(?Intent $intent, MessageTemplate $messageTemplate)
@@ -52,28 +38,16 @@ class MessageTemplateController extends Controller
 
     public function destroy(?Intent $intent, MessageTemplate $messageTemplate)
     {
-        $messageTemplate = $this->messageTemplateDataClient->deleteMessageTemplate($messageTemplate->getUid());
-
-        $resource = new MessageTemplateResource($messageTemplate);
-
-        /** @var Turn $originalTurn */
-        $originalIntent = ConversationDataClient::getScenarioWithFocusedIntent($intent->getUid());
-
-        return $this->prepareODHeaders($originalIntent, $messageTemplate, $resource);
+        if (MessageTemplateDataClient::deleteMessageTemplate($messageTemplate->getUid())) {
+            return response()->noContent(200);
+        } else {
+            return response('Error deleting message template, check the logs', 500);
+        }
     }
 
-    public function update(Intent $intent, MessageTemplateRequest $request)
+    public function update(Intent $intent, MessageTemplateRequest $request): MessageTemplateResource
     {
         $update = Serializer::deserialize($request->getContent(), MessageTemplate::class, 'json');
-        $update->setIntent($intent);
-
-        $messageTemplate = $this->messageTemplateDataClient->updateMessageTemplate($update);
-
-        $resource = new MessageTemplateResource($messageTemplate);
-
-        /** @var Turn $originalTurn */
-        $originalIntent = ConversationDataClient::getScenarioWithFocusedIntent($intent->getUid());
-
-        return $this->prepareODHeaders($originalIntent, $messageTemplate, $resource);
+        return new MessageTemplateResource(MessageTemplateDataClient::updateMessageTemplate($update));
     }
 }
