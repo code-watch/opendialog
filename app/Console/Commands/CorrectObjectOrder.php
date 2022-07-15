@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Config;
 use OpenDialogAi\Core\Conversation\Facades\ConversationDataClient;
 use OpenDialogAi\Core\Conversation\Facades\MessageTemplateDataClient;
 use OpenDialogAi\Core\Conversation\Facades\ScenarioDataClient;
@@ -46,6 +45,7 @@ class CorrectObjectOrder extends Command
 
         foreach ($scenarios as $scenarioId) {
             $scenario = ScenarioDataClient::getFullScenarioGraph($scenarioId->getUid());
+            $this->info(sprintf('Checking scenario: %s (%s)', $scenario->getUid(), $scenario->getName()));
             foreach ($scenario->getConversations() as $conversation) {
                 foreach ($conversation->getScenes() as $scene) {
                     foreach ($scene->getTurns() as $turn) {
