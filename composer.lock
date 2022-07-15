@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "75db54ad0ccbcfd9c12cd746b5ebc73a",
+    "content-hash": "b3e64f0bab46eca2bab13af2fca418f3",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -3404,24 +3404,26 @@
         },
         {
             "name": "opendialogai/core",
-            "version": "dev-bug/OPNDLG-1516_intents_messages_ordering",
+            "version": "1.x-dev",
             "source": {
                 "type": "git",
                 "url": "https://github.com/opendialogai/core.git",
-                "reference": "89dbad92cf152174ace9fc73bf76a0a01567a467"
+                "reference": "096a0a7f92d4479f3376aec8e201a8ced9652a21"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/opendialogai/core/zipball/89dbad92cf152174ace9fc73bf76a0a01567a467",
-                "reference": "89dbad92cf152174ace9fc73bf76a0a01567a467",
+                "url": "https://api.github.com/repos/opendialogai/core/zipball/096a0a7f92d4479f3376aec8e201a8ced9652a21",
+                "reference": "096a0a7f92d4479f3376aec8e201a8ced9652a21",
                 "shasum": ""
             },
             "require": {
                 "aws/aws-sdk-php": "^3.198",
                 "doctrine/dbal": "^2.11",
                 "dyrynda/laravel-model-uuid": "^6.6",
+                "ext-dom": "*",
                 "ext-intl": "*",
                 "ext-json": "*",
+                "ext-simplexml": "*",
                 "google/cloud-dialogflow": "dev-V2Beta1-support",
                 "guzzlehttp/guzzle": "^7.0.1",
                 "justinrainbow/json-schema": "^5.2",
@@ -3446,6 +3448,7 @@
                 "phpunit/phpunit": "^9.0",
                 "squizlabs/php_codesniffer": "^3.4"
             },
+            "default-branch": true,
             "type": "library",
             "extra": {
                 "laravel": {
@@ -3500,9 +3503,9 @@
             "description": "The OpenDialog Core package",
             "support": {
                 "issues": "https://github.com/opendialogai/core/issues",
-                "source": "https://github.com/opendialogai/core/tree/bug/OPNDLG-1516_intents_messages_ordering"
+                "source": "https://github.com/opendialogai/core/tree/1.x"
             },
-            "time": "2022-07-07T12:28:49+00:00"
+            "time": "2022-07-15T10:50:42+00:00"
         },
         {
             "name": "opendialogai/dgraph-docker",
@@ -12310,5 +12313,5 @@
         "ext-simplexml": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.1.0"
+    "plugin-api-version": "2.3.0"
 }
