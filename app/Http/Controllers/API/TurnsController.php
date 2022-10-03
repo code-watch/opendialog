@@ -249,8 +249,8 @@ class TurnsController extends Controller
             }
 
             $messageTemplate = new MessageTemplate();
-            $messageTemplate->setName('auto generated');
-            $messageTemplate->setOdId('auto_generated');
+            $messageTemplate->setName($intent->getName());
+            $messageTemplate->setOdId($intent->getOdId());
             $messageTemplate->setIntent($intent);
             $messageTemplate->setMessageMarkup($messageMarkup);
             $messageTemplate->setOrder(0);
