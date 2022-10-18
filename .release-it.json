@@ -10,8 +10,5 @@
   },
   "github": {
     "release": true
-  },
-  "plugins": {
-    "./scripts/bump-dependencies.js": {}
   }
 }
