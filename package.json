@@ -58,7 +58,7 @@
     "peerDependencies": {
         "release-it": "^14.11.5"
     },
-    "version": "1.14.1",
+    "version": "1.15.0",
     "resolutions": {
         "autoprefixer": "10.4.5"
     }
