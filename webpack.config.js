@@ -28,6 +28,10 @@ module.exports = {
              * @import "@sass/_vars";
              */
             'sass': path.resolve(__dirname, './resources/sass'),
+        },
+        fallback: {
+            "stream": require.resolve("stream-browserify"),
+            "crypto": false
         }
     }
 };
