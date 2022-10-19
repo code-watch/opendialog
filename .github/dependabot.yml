@@ -9,7 +9,6 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
-    target-branch: feature/php-update
     labels: "npm dependencies"
 
   - package-ecosystem: "composer"
