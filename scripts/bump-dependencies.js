@@ -1,8 +1,8 @@
-const { Plugin } = require('release-it')
+import Plugin  from 'release-it'
 
-const fs = require('fs');
-const util = require('util');
-const { spawnSync: spawn } = require('child_process')
+import fs from 'fs'
+import util from 'util'
+import { spawn } from 'child_process'
 
 const readFile = util.promisify(fs.readFile);
 
@@ -17,14 +17,10 @@ class UpdateDependencies extends Plugin {
         const deps = await parse(composer)
 
         const core = deps.require["opendialogai/core"]
-        const spawn = require('child_process').spawnSync
         await spawn(`./scripts/bump-core.sh`, [core], { stdio: 'inherit', stdout: 'inherit' })
 
         const webchat = deps.require["opendialogai/webchat"]
         await spawn(`./scripts/bump-webchat.sh`, [webchat], { stdio: 'inherit', stdout: 'inherit' })
-
-        const dgraph = deps.require["opendialogai/dgraph-docker"]
-        await spawn(`./scripts/bump-dgraph.sh`, [dgraph], { stdio: 'inherit', stdout: 'inherit' })
 
         this.log.log("Getting current version of OD Design System")
         const packagejs = await readFile('./package.json')

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b3e64f0bab46eca2bab13af2fca418f3",
+    "content-hash": "fe400f45795c4fedef5893c2bbd7f834",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -3408,12 +3408,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/opendialogai/core.git",
-                "reference": "096a0a7f92d4479f3376aec8e201a8ced9652a21"
+                "reference": "fb2abc23037e98470b8e3ff7cc4144cf2ef2e40b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/opendialogai/core/zipball/096a0a7f92d4479f3376aec8e201a8ced9652a21",
-                "reference": "096a0a7f92d4479f3376aec8e201a8ced9652a21",
+                "url": "https://api.github.com/repos/opendialogai/core/zipball/fb2abc23037e98470b8e3ff7cc4144cf2ef2e40b",
+                "reference": "fb2abc23037e98470b8e3ff7cc4144cf2ef2e40b",
                 "shasum": ""
             },
             "require": {
@@ -3505,60 +3505,20 @@
                 "issues": "https://github.com/opendialogai/core/issues",
                 "source": "https://github.com/opendialogai/core/tree/1.x"
             },
-            "time": "2022-07-15T10:50:42+00:00"
-        },
-        {
-            "name": "opendialogai/dgraph-docker",
-            "version": "21.03.0.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/opendialogai/dgraph-docker.git",
-                "reference": "2d954c694f0b742830064f2c1e1ba9a75fae97e8"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/opendialogai/dgraph-docker/zipball/2d954c694f0b742830064f2c1e1ba9a75fae97e8",
-                "reference": "2d954c694f0b742830064f2c1e1ba9a75fae97e8",
-                "shasum": ""
-            },
-            "require-dev": {
-                "guzzlehttp/guzzle": "^6.3",
-                "phpunit/phpunit": "^8.3"
-            },
-            "type": "library",
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "Apache-2.0"
-            ],
-            "authors": [
-                {
-                    "name": "Stuart Haigh",
-                    "email": "stuarth@greenshootlabs.com"
-                },
-                {
-                    "name": "Ronald Ashri",
-                    "email": "ronalda@greenshootlabs.com"
-                }
-            ],
-            "description": "The OpenDialog DGraph Docker compose file",
-            "support": {
-                "issues": "https://github.com/opendialogai/dgraph-docker/issues",
-                "source": "https://github.com/opendialogai/dgraph-docker/tree/21.03.0.2"
-            },
-            "time": "2021-06-15T11:30:56+00:00"
+            "time": "2022-09-14T07:42:03+00:00"
         },
         {
             "name": "opendialogai/webchat",
-            "version": "1.7.3",
+            "version": "1.x-dev",
             "source": {
                 "type": "git",
                 "url": "https://github.com/opendialogai/webchat.git",
-                "reference": "e8460c3c28a20f54ed42b6755fb00693823d3d56"
+                "reference": "66202c27d45664b009bf0c856f95b3069fc809e8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/opendialogai/webchat/zipball/e8460c3c28a20f54ed42b6755fb00693823d3d56",
-                "reference": "e8460c3c28a20f54ed42b6755fb00693823d3d56",
+                "url": "https://api.github.com/repos/opendialogai/webchat/zipball/66202c27d45664b009bf0c856f95b3069fc809e8",
+                "reference": "66202c27d45664b009bf0c856f95b3069fc809e8",
                 "shasum": ""
             },
             "require": {
@@ -3571,6 +3531,7 @@
                 "phpunit/phpunit": "^9.0",
                 "squizlabs/php_codesniffer": "^3.4"
             },
+            "default-branch": true,
             "type": "library",
             "extra": {
                 "laravel": {
@@ -3600,9 +3561,9 @@
             "description": "Webchat front end component for the Open Dialog project",
             "support": {
                 "issues": "https://github.com/opendialogai/webchat/issues",
-                "source": "https://github.com/opendialogai/webchat/tree/1.7.3"
+                "source": "https://github.com/opendialogai/webchat/tree/1.x"
             },
-            "time": "2022-04-12T16:25:25+00:00"
+            "time": "2022-08-04T15:16:57+00:00"
         },
         {
             "name": "opis/closure",
@@ -9428,26 +9389,27 @@
         },
         {
             "name": "fzaninotto/faker",
-            "version": "v1.9.2",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fzaninotto/Faker.git",
-                "reference": "848d8125239d7dbf8ab25cb7f054f1a630e68c2e"
+                "reference": "5ffe7db6c80f441f150fc88008d64e64af66634b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fzaninotto/Faker/zipball/848d8125239d7dbf8ab25cb7f054f1a630e68c2e",
-                "reference": "848d8125239d7dbf8ab25cb7f054f1a630e68c2e",
+                "url": "https://api.github.com/repos/fzaninotto/Faker/zipball/5ffe7db6c80f441f150fc88008d64e64af66634b",
+                "reference": "5ffe7db6c80f441f150fc88008d64e64af66634b",
                 "shasum": ""
             },
             "require": {
-                "php": "^5.3.3 || ^7.0"
+                "php": "^5.3.3 || ^7.0 || ^8.0"
             },
             "require-dev": {
                 "ext-intl": "*",
                 "phpunit/phpunit": "^4.8.35 || ^5.7",
                 "squizlabs/php_codesniffer": "^2.9.2"
             },
+            "default-branch": true,
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -9476,10 +9438,10 @@
             ],
             "support": {
                 "issues": "https://github.com/fzaninotto/Faker/issues",
-                "source": "https://github.com/fzaninotto/Faker/tree/v1.9.2"
+                "source": "https://github.com/fzaninotto/Faker/tree/master"
             },
             "abandoned": true,
-            "time": "2020-12-11T09:56:16+00:00"
+            "time": "2020-12-11T09:59:14+00:00"
         },
         {
             "name": "gitonomy/gitlib",
@@ -12303,12 +12265,13 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "opendialogai/core": 20
+        "opendialogai/core": 20,
+        "opendialogai/webchat": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": "^7.4.0",
+        "php": "^7.4.0|^8",
         "ext-dom": "*",
         "ext-simplexml": "*"
     },

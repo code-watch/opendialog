@@ -14,17 +14,15 @@ class StatusController extends Controller
         $checkUsersExist = request()->get('check_db_user') === "true";
 
         $dbStatus = $this->checkDbStatus($checkUsersExist);
-        $dgraphStatus = $this->checkDgraphStatus();
         $redisStatus = $this->checkRedisStatus();
 
         $response = [
             'db' => ($dbStatus === true) ? 'OK' : $dbStatus,
-            'dgraph' => ($dgraphStatus === true) ? 'OK' : $dgraphStatus,
             'redis' => ($redisStatus === true) ? 'OK' : $redisStatus,
         ];
 
         $errorCode = intval(request()->get('error_code')) ? intval(request()->get('error_code')) : 200;
-        $returnCode = $dbStatus === true && $dgraphStatus === true && $redisStatus === true ? 200 : $errorCode;
+        $returnCode = $dbStatus === true && $redisStatus === true ? 200 : $errorCode;
 
         return response($response, $returnCode);
     }
@@ -54,28 +52,6 @@ class StatusController extends Controller
     {
         try {
             return User::count() > 0 ? true : "No users exist in DB";
-        } catch (\Exception $e) {
-            return $e->getMessage();
-        }
-    }
-
-    /**
-     * @return string|bool
-     */
-    private function checkDgraphStatus()
-    {
-        $dgraphUrl = config('opendialog.graphql.DGRAPH_BASE_URL');
-        $dGraphPort = config('opendialog.graphql.DGRAPH_PORT');
-
-        $client = new Client([
-            'base_uri' => $dgraphUrl . ":" . $dGraphPort
-        ]);
-
-        try {
-            $response = $client->request('GET', '/health')->getBody()->getContents();
-            $status = json_decode($response)[0]->status;
-
-            return $status;
         } catch (\Exception $e) {
             return $e->getMessage();
         }

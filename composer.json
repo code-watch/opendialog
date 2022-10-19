@@ -4,7 +4,7 @@
     "description": "OpenDialog Demonstration App",
     "license": "Apache-2.0",
     "require": {
-        "php": "^7.4.0",
+        "php": "^7.4.0|^8",
         "ext-dom": "*",
         "ext-simplexml": "*",
         "doctrine/dbal": "^2.13",
@@ -18,8 +18,7 @@
         "laravel/ui": "^3.2",
         "maennchen/zipstream-php": "^2.0",
         "opendialogai/core": "1.x-dev",
-        "opendialogai/dgraph-docker": "21.03.0.2",
-        "opendialogai/webchat": "1.7.3",
+        "opendialogai/webchat": "1.x-dev",
         "phalcongelist/php-diff": "^2.0",
         "predis/predis": "^1.1",
         "spatie/commonmark-highlighter": "^2.1",
@@ -81,11 +80,9 @@
             "@php artisan key:generate --ansi"
         ],
         "post-install-cmd": [
-            "@php artisan vendor:publish --tag=dgraph --force",
             "@php artisan vendor:publish --tag=public --force"
         ],
         "post-update-cmd": [
-            "@php artisan vendor:publish --tag=dgraph --force",
             "@php artisan vendor:publish --tag=public --force"
         ]
     },

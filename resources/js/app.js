@@ -19,7 +19,7 @@ import VueCookies from 'vue-cookies'
 
 require('@/bootstrap');
 
-window.Vue = require('vue');
+window.Vue = require('vue').default;
 window.Vue.use(OpenDialogAdmin);
 window.Vue.use(BootstrapVue);
 window.Vue.use(BootstrapVueIcons);
@@ -34,7 +34,7 @@ window.Vue.use(VueCytoscape)
  */
 
 const { app } = new window.Vue({
-  el: '#app',
-  components: { OpenDialogAdmin },
-  router,
+    el: '#app',
+    components: { OpenDialogAdmin },
+    router,
 });
