@@ -42,20 +42,6 @@ jobs:
             - ./vendor
           key: v1-dependencies-{{ checksum "composer.lock" }}
 
-      # Set up dgraph
-      - run: cd dgraph && echo 'DGRAPH_AUTH_TOKEN=circlecidgraphauthtoken' > .env; docker-compose up -d
-
-
-      # Set up port forwarding from dgraph server
-      - run: sudo apt-get -y update; sleep 1; sudo apt-get -y install socat
-      - run: docker --tlsverify -H=$DOCKER_HOST --tlscacert=$DOCKER_CERT_PATH/ca.pem --tlscert=$DOCKER_CERT_PATH/cert.pem --tlskey=$DOCKER_CERT_PATH/key.pem exec dgraph_server_1 apt-get -y update
-      - run: docker --tlsverify -H=$DOCKER_HOST --tlscacert=$DOCKER_CERT_PATH/ca.pem --tlscert=$DOCKER_CERT_PATH/cert.pem --tlskey=$DOCKER_CERT_PATH/key.pem exec dgraph_server_1 apt-get -y install socat
-      - run: sleep 5
-      - run:
-          name: dgraph tunnel
-          background: true
-          command: socat TCP-LISTEN:8080,reuseaddr,fork "EXEC:'docker --tlsverify -H=$DOCKER_HOST --tlscacert=$DOCKER_CERT_PATH/ca.pem --tlscert=$DOCKER_CERT_PATH/cert.pem --tlskey=$DOCKER_CERT_PATH/key.pem exec -i dgraph_server_1 socat STDIO TCP-CONNECT:localhost:8080'"
-
       # Copy .env file
       - run: cp .env.example .env
 
@@ -80,11 +66,6 @@ jobs:
       - run: yarn run prod
 
       # run tests!
-      - run:
-          name: "Setup custom environment variables"
-          command: |
-            echo 'export OVERWRITE_DGRAPH_URL="http://localhost"' >> $BASH_ENV; echo 'export OVERWRITE_DGRAPH_PORT="8080"' >> $BASH_ENV; echo 'export OVERWRITE_DGRAPH_AUTH_TOKEN=circlecidgraphauthtoken' >> $BASH_ENV
-
       - run: phpdbg -qrr ./vendor/bin/phpunit --coverage-html build/coverage-report --configuration phpunit-ci.xml -d memory_limit=8000M
 
       - store_artifacts:
