@@ -47,9 +47,6 @@ jobs:
       # Install key
       - run: php artisan key:generate
 
-      # Install node dependencies
-      - run: curl -o- -L https://yarnpkg.com/install.sh | bash
-
       - restore_cache:
           keys:
             - v1-node-dependencies-{{ checksum "yarn.lock" }}
@@ -93,7 +90,6 @@ jobs:
 
     steps:
       - checkout
-      - run: curl -o- -L https://yarnpkg.com/install.sh | bash
 
       - restore_cache:
           keys:
