@@ -22,9 +22,6 @@ class UpdateDependencies extends Plugin {
         const webchat = deps.require["opendialogai/webchat"]
         await spawn(`./scripts/bump-webchat.sh`, [webchat], { stdio: 'inherit', stdout: 'inherit' })
 
-        const dgraph = deps.require["opendialogai/dgraph-docker"]
-        await spawn(`./scripts/bump-dgraph.sh`, [dgraph], { stdio: 'inherit', stdout: 'inherit' })
-
         this.log.log("Getting current version of OD Design System")
         const packagejs = await readFile('./package.json')
         const nodeDeps = await parse(packagejs)

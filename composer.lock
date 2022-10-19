@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b42e72291b457afb76751a906ef48e99",
+    "content-hash": "fe400f45795c4fedef5893c2bbd7f834",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -3506,46 +3506,6 @@
                 "source": "https://github.com/opendialogai/core/tree/1.x"
             },
             "time": "2022-09-14T07:42:03+00:00"
-        },
-        {
-            "name": "opendialogai/dgraph-docker",
-            "version": "21.03.0.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/opendialogai/dgraph-docker.git",
-                "reference": "2d954c694f0b742830064f2c1e1ba9a75fae97e8"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/opendialogai/dgraph-docker/zipball/2d954c694f0b742830064f2c1e1ba9a75fae97e8",
-                "reference": "2d954c694f0b742830064f2c1e1ba9a75fae97e8",
-                "shasum": ""
-            },
-            "require-dev": {
-                "guzzlehttp/guzzle": "^6.3",
-                "phpunit/phpunit": "^8.3"
-            },
-            "type": "library",
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "Apache-2.0"
-            ],
-            "authors": [
-                {
-                    "name": "Stuart Haigh",
-                    "email": "stuarth@greenshootlabs.com"
-                },
-                {
-                    "name": "Ronald Ashri",
-                    "email": "ronalda@greenshootlabs.com"
-                }
-            ],
-            "description": "The OpenDialog DGraph Docker compose file",
-            "support": {
-                "issues": "https://github.com/opendialogai/dgraph-docker/issues",
-                "source": "https://github.com/opendialogai/dgraph-docker/tree/21.03.0.2"
-            },
-            "time": "2021-06-15T11:30:56+00:00"
         },
         {
             "name": "opendialogai/webchat",
