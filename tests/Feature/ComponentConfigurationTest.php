@@ -4,14 +4,16 @@ namespace Tests\Feature;
 
 use App\User;
 use DateTime;
+use Illuminate\Support\Facades\Http;
 use Mockery\MockInterface;
-use OpenDialogAi\ActionEngine\Configuration\ActionConfiguration;
 use OpenDialogAi\ActionEngine\Actions\WebhookAction;
 use OpenDialogAi\ActionEngine\Service\ActionComponentServiceInterface;
 use OpenDialogAi\AttributeEngine\CoreAttributes\UtteranceAttribute;
 use OpenDialogAi\Core\Components\Configuration\ComponentConfiguration;
 use OpenDialogAi\Core\Components\Configuration\ConfigurationDataHelper;
 use OpenDialogAi\Core\Conversation\Facades\ConversationDataClient;
+use OpenDialogAi\Core\Conversation\Facades\IntentDataClient;
+use OpenDialogAi\Core\Conversation\Intent;
 use OpenDialogAi\Core\Conversation\InterpretedIntentCollection;
 use OpenDialogAi\Core\Conversation\Scenario;
 use OpenDialogAi\Core\Conversation\ScenarioCollection;
@@ -20,14 +22,17 @@ use OpenDialogAi\Core\InterpreterEngine\OpenDialog\OpenDialogInterpreterConfigur
 use OpenDialogAi\InterpreterEngine\Interpreters\CallbackInterpreter;
 use OpenDialogAi\InterpreterEngine\Interpreters\OpenDialogInterpreter;
 use OpenDialogAi\InterpreterEngine\Service\InterpreterComponentServiceInterface;
+use Tests\Feature\Components\AddAction;
+use Tests\Feature\Components\BrokenAction;
+use Tests\Feature\Components\GetCurrentIntentIdAction;
 use Tests\Feature\Components\TestAction;
 use Tests\Feature\Components\TestInterpreter;
 use Tests\TestCase;
 
 class ComponentConfigurationTest extends TestCase
 {
-    const COMPONENT_ID = 'interpreter.core.callbackInterpreter';
-    const CONFIGURATION = [
+    const INTERPRETER_COMPONENT_ID = 'interpreter.core.callbackInterpreter';
+    const INTERPRETER_CONFIGURATION = [
         'callbacks' => [
             'WELCOME' => 'intent.core.welcome',
         ],
@@ -54,8 +59,8 @@ class ComponentConfigurationTest extends TestCase
             ->json('GET', '/admin/api/component-configuration/'.$configuration->id)
             ->assertStatus(200)
             ->assertJsonFragment([
-                'component_id' => self::COMPONENT_ID,
-                'configuration' => self::CONFIGURATION
+                'component_id' => self::INTERPRETER_COMPONENT_ID,
+                'configuration' => self::INTERPRETER_CONFIGURATION
             ]);
     }
 
@@ -148,8 +153,8 @@ class ComponentConfigurationTest extends TestCase
         $updatedConfiguration = ComponentConfiguration::find($configuration->id);
 
         $this->assertEquals($data['name'], $updatedConfiguration->name);
-        $this->assertEquals(self::COMPONENT_ID, $updatedConfiguration->component_id);
-        $this->assertEquals(self::CONFIGURATION, $updatedConfiguration->configuration);
+        $this->assertEquals(self::INTERPRETER_COMPONENT_ID, $updatedConfiguration->component_id);
+        $this->assertEquals(self::INTERPRETER_CONFIGURATION, $updatedConfiguration->configuration);
     }
 
     public function testUpdateDuplicateNameAndScenario()
@@ -250,8 +255,8 @@ class ComponentConfigurationTest extends TestCase
         $data = [
             'name' => $name,
             'scenario_id' => $scenarioId,
-            'component_id' => self::COMPONENT_ID,
-            'configuration' => self::CONFIGURATION,
+            'component_id' => self::INTERPRETER_COMPONENT_ID,
+            'configuration' => self::INTERPRETER_CONFIGURATION,
         ];
 
         ConversationDataClient::shouldReceive('getScenarioByUid')
@@ -287,8 +292,8 @@ class ComponentConfigurationTest extends TestCase
     {
         $data = [
             'scenario_id' => '0x000',
-            'component_id' => self::COMPONENT_ID,
-            'configuration' => self::CONFIGURATION,
+            'component_id' => self::INTERPRETER_COMPONENT_ID,
+            'configuration' => self::INTERPRETER_CONFIGURATION,
         ];
 
         ConversationDataClient::shouldReceive('getScenarioByUid')
@@ -304,8 +309,8 @@ class ComponentConfigurationTest extends TestCase
     {
         $data = [
             'name' => 'Test',
-            'component_id' => self::COMPONENT_ID,
-            'configuration' => self::CONFIGURATION,
+            'component_id' => self::INTERPRETER_COMPONENT_ID,
+            'configuration' => self::INTERPRETER_CONFIGURATION,
         ];
 
         $this->actingAs($this->user, 'api')
@@ -431,13 +436,13 @@ class ComponentConfigurationTest extends TestCase
         $this->assertEquals(null, ComponentConfiguration::find($configuration->id));
     }
 
-    public function testTestConfigurationSuccess()
+    public function testTestInterpreterConfigurationSuccess()
     {
         $data = [
             'name' => 'My New Name',
             'scenario_id' => '0x000',
-            'component_id' => self::COMPONENT_ID,
-            'configuration' => self::CONFIGURATION,
+            'component_id' => self::INTERPRETER_COMPONENT_ID,
+            'configuration' => self::INTERPRETER_CONFIGURATION,
         ];
 
         $this->mock(InterpreterComponentServiceInterface::class, function (MockInterface $mock) {
@@ -455,12 +460,245 @@ class ComponentConfigurationTest extends TestCase
             ->assertStatus(200);
     }
 
+    public function testTestActionConfigurationSuccessWithNoInput()
+    {
+        $url = 'https://example.com/';
+
+        $data = [
+            'name' => 'My New Name',
+            'scenario_id' => '0x000',
+            'component_id' => 'action.core.webhook',
+            'configuration' => [
+                'webhook_url' => $url
+            ],
+        ];
+
+        $this->mock(ActionComponentServiceInterface::class, function (MockInterface $mock) {
+            $mock->shouldReceive('get')
+                ->andReturn(WebhookAction::class);
+
+            // For request validation
+            $mock->shouldReceive('has')
+                ->once()
+                ->andReturn(true);
+        });
+
+        $outputAttributes = [
+            'day' => 'Tuesday',
+            'weather' => 'Raining',
+        ];
+
+        Http::fake([
+            $url => Http::response([
+                'successful' => true,
+                'output_data' => [
+                    'attributes' => $outputAttributes
+                ]
+            ]),
+        ]);
+
+        $this->actingAs($this->user, 'api')
+            ->json('POST', '/admin/api/component-configurations/test', $data)
+            ->assertStatus(200)
+            ->assertJson([
+                'data' => [
+                    'output_attributes' => $outputAttributes
+                ]
+            ]);
+    }
+
+    public function testTestActionConfigurationSuccessWithInput()
+    {
+        $data = [
+            'name' => 'My New Name',
+            'scenario_id' => '0x000',
+            'component_id' => 'action.test.add',
+            'configuration' => [],
+            'action_data' => [
+                'attributes' => [
+                    'num_1' => '5',
+                    'num_2' => '10',
+                ],
+            ],
+        ];
+
+        $this->mock(ActionComponentServiceInterface::class, function (MockInterface $mock) {
+            $mock->shouldReceive('get')
+                ->andReturn(AddAction::class);
+
+            // For request validation
+            $mock->shouldReceive('has')
+                ->once()
+                ->andReturn(true);
+        });
+
+        $this->actingAs($this->user, 'api')
+            ->json('POST', '/admin/api/component-configurations/test', $data)
+            ->assertStatus(200)
+            ->assertJson([
+                'data' => [
+                    'output_attributes' => [
+                        'sum' => 15
+                    ]
+                ]
+            ]);
+    }
+
+    public function testTestActionConfigurationFailureWithBrokenAction()
+    {
+        $data = [
+            'name' => 'My New Name',
+            'scenario_id' => '0x000',
+            'component_id' => 'action.test.broken',
+            'configuration' => [],
+        ];
+
+        $this->mock(ActionComponentServiceInterface::class, function (MockInterface $mock) {
+            $mock->shouldReceive('get')
+                ->andReturn(BrokenAction::class);
+
+            // For request validation
+            $mock->shouldReceive('has')
+                ->once()
+                ->andReturn(true);
+        });
+
+        $this->actingAs($this->user, 'api')
+            ->json('POST', '/admin/api/component-configurations/test', $data)
+            ->assertStatus(500)
+            ->assertJsonValidationErrorFor('exception');
+    }
+
+    public function testTestActionConfigurationFailureWithMissingAttribute()
+    {
+        // The data is missing a 'num_2' input attribute
+        $data = [
+            'name' => 'My New Name',
+            'scenario_id' => '0x000',
+            'component_id' => 'action.test.add',
+            'configuration' => [],
+            'action_data' => [
+                'attributes' => [
+                    'num_1' => '5',
+                ],
+            ],
+        ];
+
+        $this->mock(ActionComponentServiceInterface::class, function (MockInterface $mock) {
+            $mock->shouldReceive('get')
+                ->andReturn(AddAction::class);
+
+            // For request validation
+            $mock->shouldReceive('has')
+                ->once()
+                ->andReturn(true);
+        });
+
+        $this->actingAs($this->user, 'api')
+            ->json('POST', '/admin/api/component-configurations/test', $data)
+            ->assertStatus(422)
+            ->assertJson([
+                'errors' => [
+                    'action_data.attributes.num_2' => "Attribute num_2 is required."
+                ]
+            ]);
+    }
+
+    public function testTestActionConfigurationFailureWithNonExistentIntent()
+    {
+        // The data is using a non-existent intent ID
+        $data = [
+            'name' => 'My New Name',
+            'scenario_id' => '0x000',
+            'component_id' => 'action.test.add',
+            'configuration' => [],
+            'action_data' => [
+                'attributes' => [
+                    'num_1' => '5',
+                    'num_2' => '5',
+                ],
+                'intent_id' => '101',
+            ],
+        ];
+
+        $this->mock(ActionComponentServiceInterface::class, function (MockInterface $mock) {
+            $mock->shouldReceive('get')
+                ->andReturn(AddAction::class);
+
+            // For request validation
+            $mock->shouldReceive('has')
+                ->once()
+                ->andReturn(true);
+        });
+
+        $this->actingAs($this->user, 'api')
+            ->json('POST', '/admin/api/component-configurations/test', $data)
+            ->assertStatus(422)
+            ->assertJsonFragment([
+                'errors' => [
+                    "action_data.intent_id" => [
+                        "The provided intent does not exist."
+                    ]
+                ]
+            ]);
+    }
+
+    public function testTestActionConfigurationSuccessWithInputAndBeforeCallback()
+    {
+        $intent = new Intent();
+        $intent->setUid('101');
+
+        $data = [
+            'name' => 'My New Name',
+            'scenario_id' => '0x000',
+            'component_id' => 'action.test.get_current_intent_id',
+            'configuration' => [],
+            'action_data' => [
+                'attributes' => [],
+                'intent_id' => $intent->getUid(),
+            ],
+        ];
+
+        $this->mock(ActionComponentServiceInterface::class, function (MockInterface $mock) {
+            $mock->shouldReceive('get')
+                ->andReturn(GetCurrentIntentIdAction::class);
+
+            // For request validation
+            $mock->shouldReceive('has')
+                ->once()
+                ->andReturn(true);
+        });
+
+        // Called in IntentExists validation rule
+        ConversationDataClient::shouldReceive('getIntentByUid')
+            ->with($intent->getUid())
+            ->once()
+            ->andReturn($intent);
+
+        // Called in controller
+        IntentDataClient::shouldReceive('getFullIntentGraph')
+            ->with($intent->getUid())
+            ->once()
+            ->andReturn($intent);
+
+        $this->actingAs($this->user, 'api')
+            ->json('POST', '/admin/api/component-configurations/test', $data)
+            ->assertStatus(200)
+            ->assertJson([
+                'data' => [
+                    'output_attributes' => [
+                        'intent_id' => $intent->getUid(),
+                    ]
+                ]
+            ]);
+    }
+
     public function testTestConfigurationFailureInvalidData()
     {
         $data = [
             'name' => 'My New Name',
             'scenario_id' => '0x000',
-            'configuration' => self::CONFIGURATION,
+            'configuration' => self::INTERPRETER_CONFIGURATION,
         ];
 
         $this->actingAs($this->user, 'api')
@@ -511,11 +749,11 @@ class ComponentConfigurationTest extends TestCase
         $data = [
             'name' => 'My New Name',
             'scenario_id' => '0x000',
-            'component_id' => self::COMPONENT_ID,
-            'configuration' => self::CONFIGURATION,
+            'component_id' => self::INTERPRETER_COMPONENT_ID,
+            'configuration' => self::INTERPRETER_CONFIGURATION,
         ];
 
-        $mockInterpreter = new class(OpenDialogInterpreterConfiguration::create('test', self::CONFIGURATION)) extends OpenDialogInterpreter {
+        $mockInterpreter = new class(OpenDialogInterpreterConfiguration::create('test', self::INTERPRETER_CONFIGURATION)) extends OpenDialogInterpreter {
             public function interpret(UtteranceAttribute $utterance): InterpretedIntentCollection
             {
                 return new InterpretedIntentCollection();

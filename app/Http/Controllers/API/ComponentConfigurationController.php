@@ -9,21 +9,27 @@ use App\Http\Resources\ComponentConfigurationCollection;
 use App\Http\Resources\ComponentConfigurationResource;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 use OpenDialogAi\ActionEngine\Actions\ActionInput;
-use OpenDialogAi\ActionEngine\Actions\ActionInterface;
+use OpenDialogAi\ActionEngine\Actions\ActionResult;
+use OpenDialogAi\ActionEngine\Actions\BaseAction;
 use OpenDialogAi\ActionEngine\Service\ActionComponentServiceInterface;
+use OpenDialogAi\AttributeEngine\Contracts\Attribute;
 use OpenDialogAi\AttributeEngine\CoreAttributes\UtteranceAttribute;
+use OpenDialogAi\AttributeEngine\Facades\AttributeResolver;
 use OpenDialogAi\Core\Components\Configuration\ComponentConfiguration;
 use OpenDialogAi\Core\Components\Exceptions\UnknownComponentTypeException;
 use OpenDialogAi\Core\Components\Helper\ComponentHelper;
 use OpenDialogAi\Core\Conversation\Facades\ConversationDataClient;
+use OpenDialogAi\Core\Conversation\Facades\IntentDataClient;
 use OpenDialogAi\Core\Conversation\Intent;
 use OpenDialogAi\Core\Conversation\IntentCollection;
 use OpenDialogAi\Core\Conversation\Scenario;
 use OpenDialogAi\InterpreterEngine\Service\InterpreterComponentServiceInterface;
+use Throwable;
 
 class ComponentConfigurationController extends Controller
 {
@@ -131,9 +137,9 @@ class ComponentConfigurationController extends Controller
      * Allows for testing of a configuration without persisting it
      *
      * @param ComponentConfigurationTestRequest $request
-     * @return Response
+     * @return JsonResponse|Response
      */
-    public function test(ComponentConfigurationTestRequest $request): Response
+    public function test(ComponentConfigurationTestRequest $request)
     {
         $componentId = $request->get('component_id');
 
@@ -189,11 +195,10 @@ class ComponentConfigurationController extends Controller
 
     /**
      * @param ComponentConfigurationTestRequest $request
-     * @return Response
+     * @return JsonResponse|Response
      */
-    private function testInterpreter(ComponentConfigurationTestRequest $request): Response
+    private function testInterpreter(ComponentConfigurationTestRequest $request)
     {
-        $data = null;
         $text = $request->get('utterance') ?? "Hello from OpenDialog";
 
         try {
@@ -209,23 +214,20 @@ class ComponentConfigurationController extends Controller
             /** @var IntentCollection $intents */
             $intents = $interpreter->interpret($utterance);
 
-            $status = $intents->isEmpty() ? 400 : 200;
-
             if ($intents->isEmpty()) {
-                $data = [
-                    'errors' => [
-                        'no-match' => [
-                            sprintf(
-                                "No intent found for the utterance: '%s'. Perhaps try a different utterance.",
-                                $text
-                            )
-                        ]
+                return $this->errorResponse([
+                    'no-match' => [
+                        sprintf(
+                            "No intent found for the utterance: '%s'. Perhaps try a different utterance.",
+                            $text
+                        )
                     ]
-                ];
+                ]);
             } else {
                 /** @var Intent $intent */
                 $intent = $intents->first();
-                $data = [
+
+                return response()->json([
                     'messages' => [
                         'intent' => [
                             sprintf(
@@ -236,48 +238,133 @@ class ComponentConfigurationController extends Controller
                             )
                         ]
                     ]
-                ];
+                ]);
             }
-        } catch (Exception $e) {
+        } catch (Exception|Throwable $e) {
             Log::info(sprintf(
                 "Testing interpreter (%s) failed, caught exception: %s",
                 $request->get('component_id'),
                 $e->getMessage()
             ));
 
-            $status = 400;
-
-            $data = [
-                'errors' => [
-                    'exception' => [$e->getMessage()]
-                ]
-            ];
+            return $this->errorResponse([
+                'exception' => [$e->getMessage()]
+            ], 500);
         }
-        return response($data, $status);
     }
 
     /**
      * @param ComponentConfigurationTestRequest $request
-     * @return Response
+     * @return JsonResponse|Response
      */
-    private function testAction(ComponentConfigurationTestRequest $request): Response
+    private function testAction(ComponentConfigurationTestRequest $request)
     {
         try {
             $actionClass = resolve(ActionComponentServiceInterface::class)->get($request->get('component_id'));
 
-            /** @var ActionInterface $action */
+            /** @var BaseAction $action */
             $action = new $actionClass($actionClass::createConfiguration('test', $request->get('configuration')));
-            $result = $action->perform(new ActionInput());
+
+            $actionInput = new ActionInput();
+
+            $attributes = $request->json('action_data.attributes', []);
+
+            foreach ($attributes as $name => $value) {
+                $actionInput->addAttribute(AttributeResolver::getAttributeFor($name, $value));
+            }
+
+            if (!$actionInput->containsAllAttributes($action::getRequiredAttributes())) {
+                $errors = $this->getMissingAttributeErrors($action, $actionInput);
+
+                return $this->errorResponse($errors, 422);
+            }
+
+            $intentUid = $request->json('action_data.intent_id');
+
+            $result = $this->performActionTest($action, $actionInput, $intentUid);
 
             $status = $result->isSuccessful() ? 200 : 400;
-        } catch (Exception $e) {
+        } catch (Exception|Throwable $e) {
             Log::info(sprintf(
                 'Running test on action with component ID %s ran into and exception and failed - %s',
                 $request->get('component_id'),
                 $e->getMessage()
             ));
-            $status = 400;
+            return $this->errorResponse([
+                'exception' => [$e->getMessage()],
+            ], 500);
         }
-        return response(null, $status);
+
+        // todo
+        return response()->json([
+            'data' => [
+                'output_attributes' => $result->getResultAttributes()
+                    ->getAttributes()
+                    ->map(fn ($_, Attribute $a) => $a->getValue())
+            ]
+        ], $status);
+    }
+
+    /**
+     * Given an action and action, determines the missing attribute errors.
+     *
+     * @param BaseAction $action
+     * @param ActionInput $actionInput
+     * @return array
+     */
+    protected function getMissingAttributeErrors(BaseAction $action, ActionInput $actionInput): array
+    {
+        $expectedAttributes = $action::getRequiredAttributes();
+
+        /** @var array|string[] $actualAttributes */
+        $actualAttributes = $actionInput->getAttributeBag()->getAttributes()->map(fn($_, Attribute $a) => $a->getId())->toArray();
+
+        $missingAttributes = array_values(array_diff($expectedAttributes, $actualAttributes));
+        $messages = array_map(fn(string $name) => sprintf("Attribute %s is required.", $name), $missingAttributes);
+        $missingAttributes = array_map(fn(string $name) => "action_data.attributes.$name", $missingAttributes);
+
+        return array_combine($missingAttributes, $messages);
+    }
+
+    /**
+     * @param BaseAction $action
+     * @param ActionInput $actionInput
+     * @param string|null $intentUid
+     * @return ActionResult
+     */
+    protected function performActionTest(BaseAction $action, ActionInput $actionInput, ?string $intentUid): ActionResult
+    {
+        $intent = null;
+
+        $usesBeforePerformCallback = $action::usesBeforePerformCallback();
+        $usesAfterPerformCallback = $action::usesAfterPerformCallback();
+
+        if (($usesBeforePerformCallback || $usesAfterPerformCallback) && $intentUid) {
+            $intent = IntentDataClient::getFullIntentGraph($intentUid);
+        }
+
+        if ($usesBeforePerformCallback && !is_null($intent)) {
+            $action->getBeforePerformCallback()($intent);
+        }
+
+        $result = $action->perform($actionInput);
+
+        if ($usesAfterPerformCallback && !is_null($intent)) {
+            $action->getAfterPerformCallback()($intent);
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param array $errors
+     * @param int $status
+     * @return JsonResponse
+     */
+    protected function errorResponse(array $errors, int $status = 400): JsonResponse
+    {
+        return response()->json([
+            'errors' => $errors,
+        ], $status);
     }
 }

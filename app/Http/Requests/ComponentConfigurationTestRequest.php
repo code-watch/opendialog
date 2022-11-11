@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\IntentExists;
+
 class ComponentConfigurationTestRequest extends ComponentConfigurationRequest
 {
     /**
@@ -13,7 +15,13 @@ class ComponentConfigurationTestRequest extends ComponentConfigurationRequest
     {
         $originalRules = parent::rules();
 
-        $rules = [];
+        $rules = [
+            'action_data' => ['bail', 'sometimes', 'array'],
+            'action_data.attributes' => ['bail', 'sometimes', 'array'],
+            'action_data.attributes.*' => ['bail', 'sometimes', 'string', 'nullable'],
+            'action_data.intent_id' => ['bail', 'sometimes', new IntentExists()],
+        ];
+
         $rules['component_id'] = $originalRules['component_id'];
         $rules['configuration'] = $originalRules['configuration'];
         $rules['configuration.app_url'] = $originalRules['configuration.app_url'] ?? [];

@@ -69,7 +69,7 @@ class ComponentConfigurationRequest extends FormRequest
             ],
             'configuration' => [
                 'bail',
-                Rule::requiredIf($this->method() == 'POST' || !is_null($this->component_id)),
+                Rule::requiredIf(($this->method() == 'POST' || !is_null($this->component_id)) && $this->configuration !== []),
                 'array',
                 new ComponentConfigurationRule($this->component_id ?? '')
             ],
