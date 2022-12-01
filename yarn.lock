@@ -2782,13 +2782,13 @@ atob@^2.1.1:
   resolved "https://registry.yarnpkg.com/atob/-/atob-2.1.2.tgz#6d9517eb9e030d2436666651e86bd9f6f13533c9"
   integrity sha512-Wm6ukoaOGJi/73p/cl2GvLjTI5JM1k/O14isD73YML8StrH/7/lRFgmg8nICZgD3bZZvjwCGxtMOD3wWNAu8cg==
 
-autoprefixer@^10.4.0:
-  version "10.4.12"
-  resolved "https://registry.yarnpkg.com/autoprefixer/-/autoprefixer-10.4.12.tgz#183f30bf0b0722af54ee5ef257f7d4320bb33129"
-  integrity sha512-WrCGV9/b97Pa+jtwf5UGaRjgQIg7OK3D06GnoYoZNcG1Xb8Gt3EfuKjlhh9i/VtT16g6PYjZ69jdJ2g8FxSC4Q==
+autoprefixer@10.4.5, autoprefixer@^10.4.0:
+  version "10.4.5"
+  resolved "https://registry.yarnpkg.com/autoprefixer/-/autoprefixer-10.4.5.tgz#662193c744094b53d3637f39be477e07bd904998"
+  integrity sha512-Fvd8yCoA7lNX/OUllvS+aS1I7WRBclGXsepbvT8ZaPgrH24rgXpZzF0/6Hh3ZEkwg+0AES/Osd196VZmYoEFtw==
   dependencies:
-    browserslist "^4.21.4"
-    caniuse-lite "^1.0.30001407"
+    browserslist "^4.20.2"
+    caniuse-lite "^1.0.30001332"
     fraction.js "^4.2.0"
     normalize-range "^0.1.2"
     picocolors "^1.0.0"
@@ -3075,7 +3075,7 @@ browserify-zlib@^0.2.0:
   dependencies:
     pako "~1.0.5"
 
-browserslist@^4.0.0, browserslist@^4.14.5, browserslist@^4.16.6, browserslist@^4.20.3, browserslist@^4.21.3, browserslist@^4.21.4:
+browserslist@^4.0.0, browserslist@^4.14.5, browserslist@^4.16.6, browserslist@^4.20.2, browserslist@^4.20.3, browserslist@^4.21.3, browserslist@^4.21.4:
   version "4.21.4"
   resolved "https://registry.yarnpkg.com/browserslist/-/browserslist-4.21.4.tgz#e7496bbc67b9e39dd0f98565feccdcb0d4ff6987"
   integrity sha512-CBHJJdDmgjl3daYjN5Cp5kbTf1mUhZoS+beLklHIvkOWscs83YAhLlF3Wsh/lciQYAcbBJgTOD44VtG31ZM4Hw==
@@ -3210,10 +3210,10 @@ caniuse-lite@^1.0.0, caniuse-lite@^1.0.30001400:
   resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001414.tgz#5f1715e506e71860b4b07c50060ea6462217611e"
   integrity sha512-t55jfSaWjCdocnFdKQoO+d2ct9C59UZg4dY3OnUlSZ447r8pUtIKdp0hpAzrGFultmTC+Us+KpKi4GZl/LXlFg==
 
-caniuse-lite@^1.0.30001407:
-  version "1.0.30001422"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001422.tgz#f2d7c6202c49a8359e6e35add894d88ef93edba1"
-  integrity sha512-hSesn02u1QacQHhaxl/kNMZwqVG35Sz/8DgvmgedxSH8z9UUpcDYSPYgsj3x5dQNRcNp6BwpSfQfVzYUTm+fog==
+caniuse-lite@^1.0.30001332:
+  version "1.0.30001435"
+  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001435.tgz#502c93dbd2f493bee73a408fe98e98fb1dad10b2"
+  integrity sha512-kdCkUTjR+v4YAJelyiDTqiu82BDr4W4CP5sgTA0ZBmqn30XfS2ZghPLMowik9TPhS+psWJiUNxsqLyurDbmutA==
 
 chalk@5.0.1:
   version "5.0.1"

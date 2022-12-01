@@ -5,9 +5,6 @@ set -e
 echo "Setting up the database..."
 php artisan migrate --force
 
-echo "Initializing dgraph schema..."
-php artisan schema:init --yes
-
 echo "Creating admin user"
 php artisan user:create --userCheck
 
