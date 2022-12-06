@@ -357,14 +357,14 @@ class ImportExportScenariosTest extends TestCase
         // Create configurations for some other scenario
         ScenarioImportExportHelper::createDefaultConfigurationsForScenario('0x123789');
 
-        // Mock storing the scenario in DGraph
+        // Mock storing the scenario
         ScenarioDataClient::shouldReceive('addFullScenarioGraph')->with($scenario)
             ->andReturn($scenarioWithUids);
         $storedScenario = ScenarioDataClient::addFullScenarioGraph($scenario);
 
         $expectedFilePath = ScenarioImportExportHelper::getScenarioFilePath($storedScenario->getOdId());
 
-        // Mocks for pulling data from DGraph
+        // Mocks for pulling data
         ConversationDataClient::shouldReceive('getAllScenarios')->andReturn(new ScenarioCollection([$storedScenario]));
         ScenarioDataClient::shouldReceive('getFullScenarioGraph')->with($storedScenario->getUid())
             ->andReturn($storedScenario);

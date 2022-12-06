@@ -23,12 +23,10 @@ yarn-error.log
 /resources/views/vendor/pingpong
 update-web-chat.sh
 auth.json
-dgraph
 xdebug.log
 .lando.yml
 .env-e
 .lando.yml-e
-tests/_dgraphdata
 build
 .DS_store
 .php_cs.cache
