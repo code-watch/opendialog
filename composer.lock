@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a61610c147d5a88489c659a1e5f5f3a5",
+    "content-hash": "fe400f45795c4fedef5893c2bbd7f834",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -3408,12 +3408,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/opendialogai/core.git",
-                "reference": "4e09d11e4c5b7f1da900e39aa533aa8ed2342d3f"
+                "reference": "d736b5a3283bbaef7c4311f739879b19296a62e9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/opendialogai/core/zipball/4e09d11e4c5b7f1da900e39aa533aa8ed2342d3f",
-                "reference": "4e09d11e4c5b7f1da900e39aa533aa8ed2342d3f",
+                "url": "https://api.github.com/repos/opendialogai/core/zipball/d736b5a3283bbaef7c4311f739879b19296a62e9",
+                "reference": "d736b5a3283bbaef7c4311f739879b19296a62e9",
                 "shasum": ""
             },
             "require": {
@@ -3443,7 +3443,6 @@
                 "friendsofphp/php-cs-fixer": "^2.15",
                 "matthewbdaly/artisan-standalone": "^0.0.8",
                 "mockery/mockery": "^1.2",
-                "opendialogai/dgraph-docker": "21.03.0.1",
                 "orchestra/testbench": "^6.0",
                 "phpunit/phpunit": "^9.0",
                 "squizlabs/php_codesniffer": "^3.4"
@@ -3454,7 +3453,6 @@
                 "laravel": {
                     "providers": [
                         "OpenDialogAi\\Core\\CoreServiceProvider",
-                        "OpenDialogAi\\GraphQLClient\\GraphQLClientServiceProvider",
                         "OpenDialogAi\\Core\\Reflection\\ReflectionServiceProvider",
                         "OpenDialogAi\\ConversationEngine\\ConversationEngineServiceProvider",
                         "OpenDialogAi\\ConversationLog\\ConversationLogServiceProvider",
@@ -3485,7 +3483,6 @@
                     "OpenDialogAi\\SensorEngine\\": "src/SensorEngine",
                     "OpenDialogAi\\ContextEngine\\": "src/ContextEngine",
                     "OpenDialogAi\\Core\\Database\\": "database/",
-                    "OpenDialogAi\\GraphQLClient\\": "src/GraphQLClient",
                     "OpenDialogAi\\MessageBuilder\\": "src/MessageBuilder",
                     "OpenDialogAi\\PlatformEngine\\": "src/PlatformEngine",
                     "OpenDialogAi\\ResponseEngine\\": "src/ResponseEngine",
@@ -3505,20 +3502,20 @@
                 "issues": "https://github.com/opendialogai/core/issues",
                 "source": "https://github.com/opendialogai/core/tree/1.x"
             },
-            "time": "2022-11-11T09:54:51+00:00"
+            "time": "2022-12-20T12:05:31+00:00"
         },
         {
             "name": "opendialogai/webchat",
-            "version": "1.9.5",
+            "version": "1.x-dev",
             "source": {
                 "type": "git",
                 "url": "https://github.com/opendialogai/webchat.git",
-                "reference": "702f1a424c3f97054ac1a5bebc2c381643ce48cd"
+                "reference": "d751bc2d6a3f276a9dbc3f385af4e9d2308e7e1f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/opendialogai/webchat/zipball/702f1a424c3f97054ac1a5bebc2c381643ce48cd",
-                "reference": "702f1a424c3f97054ac1a5bebc2c381643ce48cd",
+                "url": "https://api.github.com/repos/opendialogai/webchat/zipball/d751bc2d6a3f276a9dbc3f385af4e9d2308e7e1f",
+                "reference": "d751bc2d6a3f276a9dbc3f385af4e9d2308e7e1f",
                 "shasum": ""
             },
             "require": {
@@ -3526,11 +3523,12 @@
                 "php": "^7.4 || ^8.0"
             },
             "require-dev": {
-                "opendialogai/core": "1.20.1",
+                "opendialogai/core": "1.x-dev",
                 "orchestra/testbench": "^6.0",
                 "phpunit/phpunit": "^9.0",
                 "squizlabs/php_codesniffer": "^3.4"
             },
+            "default-branch": true,
             "type": "library",
             "extra": {
                 "laravel": {
@@ -3560,9 +3558,9 @@
             "description": "Webchat front end component for the Open Dialog project",
             "support": {
                 "issues": "https://github.com/opendialogai/webchat/issues",
-                "source": "https://github.com/opendialogai/webchat/tree/1.9.5"
+                "source": "https://github.com/opendialogai/webchat/tree/1.x"
             },
-            "time": "2022-10-17T11:30:54+00:00"
+            "time": "2022-12-20T17:12:03+00:00"
         },
         {
             "name": "opis/closure",
@@ -12264,7 +12262,8 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "opendialogai/core": 20
+        "opendialogai/core": 20,
+        "opendialogai/webchat": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
