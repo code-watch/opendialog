@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use OpenDialogAi\AttributeEngine\Contracts\AttributeValue;
 use OpenDialogAi\AttributeEngine\Contracts\CollectionAttribute;
+use OpenDialogAi\AttributeEngine\Contracts\CompositeAttribute;
 use OpenDialogAi\AttributeEngine\Facades\AttributeResolver;
 use OpenDialogAi\ContextEngine\Facades\ContextService;
 
@@ -55,7 +56,9 @@ class UserContextController extends Controller
         foreach ($attributes as $key => $values) {
             if (!in_array($key, self::$ignoreList)) {
                 if ($values instanceof CollectionAttribute) {
-                    $formatted[$key] = array_map(fn (AttributeValue $v) => $v->getRawValue(), $values->getValue());
+                    $formatted[$key] = array_map(fn(AttributeValue $v) => $v->getRawValue(), $values->getValue());
+                } else if ($values instanceof CompositeAttribute) {
+                    $formatted[$key] = $values->toString();
                 } else {
                     $formatted[$key] = $values->getAttributeValue()->getRawValue();
                 }
